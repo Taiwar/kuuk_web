@@ -1,7 +1,7 @@
-# Kuuk-Flutter
+# Kuuk-Web
 <p align="center">
-    <a href="https://github.com/Taiwar/kuuk/contributors">
-        <img src="https://img.shields.io/github/contributors/Taiwar/kuuk" alt="Contributors"/>
+    <a href="https://github.com/Taiwar/kuuk_web/contributors">
+        <img src="https://img.shields.io/github/contributors/Taiwar/kuuk_web" alt="Contributors"/>
     </a>
 </p>
 <p align="center">
