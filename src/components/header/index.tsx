@@ -9,7 +9,7 @@ export function Header() {
   const match = useRouteMatch()
 
   return <Nav
-    className="border-b-4 border-primary"
+    className="border-b-4 border-pink-400"
     activeKey={match.path}
   >
     <KuukNavLink to="/" text="Home"/>
