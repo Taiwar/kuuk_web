@@ -5,7 +5,7 @@
     </a>
 </p>
 <p align="center">
-    <img width="256" src="assets/app_icon_512.png" alt="Kuuk icon"/>
+    <img width="256" src="public/logo512.png" alt="Kuuk icon"/>
 </p>
 Recipe management.
 
