@@ -1,0 +1,111 @@
+type StepDTO {
+  id: String!
+  name: String!
+  description: String
+  picture: String
+}
+
+type IngredientDTO {
+  id: String!
+  name: String!
+  amount: Float!
+  unit: String!
+}
+
+type RecipeDTO {
+  id: String!
+  name: String!
+  slug: String!
+  author: String
+  prepTimeMin: Int
+  cookTimeMin: Int
+  totalTimeMin: Int
+  servings: Int!
+  rating: Int
+  description: String
+  notes: [String]!
+  sourceLinks: [String]!
+  tags: [String]!
+  pictures: [String]!
+  ingredients: [IngredientDTO]
+  steps: [StepDTO]
+}
+
+input CreateRecipeInput {
+  name: String!
+  slug: String
+  author: String
+  prepTimeMin: Int
+  cookTimeMin: Int
+  totalTimeMin: Int
+  servings: Int!
+  rating: Int
+  description: String
+  notes: [String]
+  sourceLinks: [String]
+  tags: [String]
+  pictures: [String]
+}
+
+input UpdateRecipeInput {
+  id: String!
+  name: String
+  slug: String
+  author: String
+  prepTimeMin: Int
+  cookTimeMin: Int
+  totalTimeMin: Int
+  servings: Int
+  rating: Int
+  description: String
+  notes: [String]
+  sourceLinks: [String]
+  tags: [String]
+  pictures: [String]
+}
+
+input AddIngredientInput {
+  recipeID: String!
+  name: String!
+  amount: Float!
+  unit: String!
+}
+
+input UpdateIngredientInput {
+  id: String!
+  name: String
+  amount: Float
+  unit: String
+}
+
+input AddStepInput {
+  recipeID: String!
+  name: String!
+  description: String
+  picture: String
+}
+
+input UpdateStepInput {
+  id: String!
+  name: String
+  description: String
+  picture: String
+}
+
+type Query {
+  recipes: [RecipeDTO]
+  recipe(id: String!): RecipeDTO
+  recipeBySlug(slug: String!): RecipeDTO
+}
+
+type Mutation {
+  createRecipe(createRecipeInput: CreateRecipeInput): RecipeDTO
+  updateRecipe(updateRecipeInput: UpdateRecipeInput): RecipeDTO
+  deleteRecipe(id: String!): Boolean
+  addIngredient(addIngredientInput: AddIngredientInput): IngredientDTO
+  updateIngredient(updateIngredientInput: UpdateIngredientInput): IngredientDTO
+  removeIngredient(ingredientID: String!, recipeID: String): Boolean
+  addStep(addStepInput: AddStepInput): StepDTO
+  updateStep(updateStepInput: UpdateStepInput): StepDTO
+  removeStep(stepID: String!, recipeID: String): Boolean
+}
