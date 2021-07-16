@@ -1,6 +1,7 @@
 import React from 'react'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { Button, Col, Container, Form, Row } from 'react-bootstrap'
+import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { AddIngredientInput, IngredientDTO, RecipeDTO } from '../../shared/graphql'
 
@@ -54,12 +55,25 @@ export function RecipePage() {
     pollInterval: 500
   })
   const [addIngredient, { data }] = useMutation(ADD_INGREDIENT)
-
+  const { register, handleSubmit, formState: { errors } } = useForm()
   if (recipeResult.loading) return <p>Loading...</p>
   if (recipeResult.error) return <p>Error :(</p>
 
-  console.log('Add ingredient data', data)
   const recipe = recipeResult.data.recipeBySlug as RecipeDTO
+
+  function onSubmit(data: any) {
+    console.log('submitting', data)
+    const addIngredientInput: AddIngredientInput = {
+      recipeID: recipe.id,
+      name: data.name,
+      amount: parseFloat(data.amount),
+      unit: data.unit
+    }
+    addIngredient({ variables: { addIngredientInput } })
+      .then(() => recipeResult.refetch())
+  }
+
+  console.log('Add ingredient data', data)
   return <Container>
     <Row>
       <Col>
@@ -73,15 +87,18 @@ export function RecipePage() {
             })
           }
         </ul>
-        <Form>
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <Form.Group className="mb-3" controlId="formIngredient">
             <Form.Label>Name</Form.Label>
-            <Form.Control placeholder="Name" />
+            <Form.Control placeholder="Name" {...register('name')} />
             <Form.Label>Amount</Form.Label>
-            <Form.Control type="number" placeholder="Amount" />
+            <Form.Control type="number" placeholder="Amount" {...register('amount')}/>
             <Form.Label>Unit</Form.Label>
-            <Form.Control placeholder="Unit" />
+            <Form.Control placeholder="Unit" {...register('unit')}/>
           </Form.Group>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
         </Form>
         <Button onClick={() => {
           const addIngredientInput: AddIngredientInput = {
