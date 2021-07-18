@@ -27,7 +27,6 @@ export function RecipeMeta(props: { recipe: RecipeDTO }) {
     }
   })
   const [showInputs, setShowInputs] = useState(false)
-  // TODO: Fix this with proper cache update
   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
     update(cache, { data: { updateRecipe } }) {
       if (!updateRecipe) return
