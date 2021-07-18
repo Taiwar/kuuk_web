@@ -21,9 +21,9 @@ export function RecipeMeta(props: { recipe: RecipeDTO }) {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       servings: recipe.servings,
-      prepTimeMin: recipe.prepTimeMin,
-      cookTimeMin: recipe.cookTimeMin,
-      totalTimeMin: recipe.totalTimeMin
+      prepTimeMin: recipe.prepTimeMin ?? 0,
+      cookTimeMin: recipe.cookTimeMin ?? 0,
+      totalTimeMin: recipe.totalTimeMin ?? 0
     }
   })
   const [showInputs, setShowInputs] = useState(false)
