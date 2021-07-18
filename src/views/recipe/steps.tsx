@@ -58,8 +58,8 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
         addStep: {
           __typename: 'StepDTO',
           id: 'temp-id',
-          name: data.name,
-          description: data.description
+          name: addStepInput.name,
+          description: addStepInput.description
         }
       }
     }).then()

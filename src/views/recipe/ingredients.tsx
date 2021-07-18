@@ -1,5 +1,5 @@
-import { gql, useMutation } from '@apollo/client'
 import React from 'react'
+import { gql, useMutation } from '@apollo/client'
 import { Plus } from 'react-bootstrap-icons'
 import { useForm } from 'react-hook-form'
 import { AddIngredientInput, IngredientDTO } from '../../shared/graphql'
@@ -29,13 +29,13 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
                   const newIngredientRef = cache.writeFragment({
                     data: addIngredient,
                     fragment: gql`
-                                            fragment NewIngredient on IngredientDTO {
-                                                id
-                                                name
-                                                amount
-                                                unit
-                                            }
-                                        `
+                                  fragment NewIngredient on IngredientDTO {
+                                      id
+                                      name
+                                      amount
+                                      unit
+                                  }
+                              `
                   })
                   return [...existingIngredients, newIngredientRef]
                 }
@@ -62,9 +62,9 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
         addIngredient: {
           __typename: 'IngredientDTO',
           id: 'temp-id',
-          name: data.name,
-          amount: parseFloat(data.amount),
-          unit: data.unit
+          name: addIngredientInput.name,
+          amount: addIngredientInput.amount,
+          unit: addIngredientInput.unit
         }
       }
     })

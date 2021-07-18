@@ -4,6 +4,7 @@ import { Col, Container, Row } from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
 import { RecipeDTO } from '../../shared/graphql'
 import { RecipeIngredients } from './ingredients'
+import { RecipeMeta } from './meta'
 import { RecipeSteps } from './steps'
 
 const FETCH_RECIPE = gql`
@@ -57,9 +58,7 @@ export function RecipePage() {
           <div className="bg-pink-300 p-4 rounded-top">
             <h2 className="mb-0 text-white fw-bold">{recipe.name}</h2>
           </div>
-          <div className="bg-pink-400 p-4">
-            <h5 className="mb-0 text-white"><b>{recipe.servings}</b> servings</h5>
-          </div>
+          <RecipeMeta recipe={recipe} />
           <RecipeIngredients recipeId={recipe.id} ingredients={recipe.ingredients || []} />
           <RecipeSteps recipeId={recipe.id} steps={recipe.steps || []} />
         </div>
