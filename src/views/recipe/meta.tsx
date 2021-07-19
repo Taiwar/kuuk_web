@@ -88,7 +88,7 @@ export function RecipeMeta(props: { recipe: RecipeDTO }) {
     })
   }
 
-  return <div className="bg-pink-400 p-4">
+  return <div>
     <form onSubmit={handleSubmit(handleOnSubmit)}>
       <div className="grid grid-cols-4" onDoubleClick={handleDoubleClick}>
         <div>
@@ -120,9 +120,9 @@ export function RecipeMeta(props: { recipe: RecipeDTO }) {
           </h5>
         </div>
       </div>
-      <div className="mt-1">
-        <button className="rounded-md shadow-lg bg-pink-300 p-2 text-white float-end fw-bold ml-2" hidden={!showInputs} onClick={handleCancel}>Cancel</button>
-        <button className="rounded-md shadow-lg bg-pink-300 p-2 text-white float-end fw-bold" type="submit" hidden={!showInputs}>Update</button>
+      <div className="mt-1 flex justify-end">
+        <button className="rounded-md shadow-lg bg-pink-300 p-2 text-white fw-bold" type="submit" hidden={!showInputs}>Update</button>
+        <button className="rounded-md shadow-lg bg-pink-100 p-2 text-gray-600 fw-bold ml-2" hidden={!showInputs} onClick={handleCancel}>Cancel</button>
       </div>
     </form>
   </div>

@@ -55,7 +55,9 @@ export function RecipePage() {
       <div className="bg-pink-300 p-4 rounded-t-lg">
         <h2 className="mb-0 text-white font-bold text-3xl">{recipe.name}</h2>
       </div>
-      <RecipeMeta recipe={recipe} />
+      <div className="bg-pink-400 p-4">
+        <RecipeMeta recipe={recipe} />
+      </div>
       <div className="bg-white p-8 rounded-b-lg">
         <RecipeIngredients recipeId={recipe.id} ingredients={recipe.ingredients || []} />
         <RecipeSteps recipeId={recipe.id} steps={recipe.steps || []} />
