@@ -16,7 +16,7 @@ const ADD_INGREDIENT = gql`
 `
 
 export function RecipeIngredients(props: { recipeId: string, ingredients: IngredientDTO[] }) {
-  const { register, handleSubmit } = useForm()
+  const { register, handleSubmit, reset } = useForm()
   const [addIngredient] = useMutation(ADD_INGREDIENT, {
     update(cache, { data: { addIngredient } }) {
       cache.modify({
@@ -67,6 +67,8 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
           unit: addIngredientInput.unit
         }
       }
+    }).then(() => {
+      reset()
     })
   }
 
@@ -85,13 +87,13 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
     <form onSubmit={handleSubmit(onAddIngredientSubmit)}>
       <div className="grid grid-cols-7 gap-1 lg:w-1/2">
         <div className="col-span-2">
-          <input className="block w-full rounded-md border-gray-300 shadow-sm" type="number" placeholder="Amount" {...register('amount')} />
+          <input required className="block w-full rounded-md border-gray-300 shadow-sm" type="number" placeholder="Amount*" {...register('amount')} />
         </div>
         <div className="col-span-1">
-          <input className="block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Unit" {...register('unit')}/>
+          <input required className="block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Unit*" {...register('unit')}/>
         </div>
         <div className="col-span-3">
-          <input className="block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Name" {...register('name')} />
+          <input required className="block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Name*" {...register('name')} />
         </div>
         <div className="col">
           <button className="rounded-full p-1.5 shadow bg-pink-400 text-white" type="submit">

@@ -27,8 +27,13 @@ type RecipeDTO {
   sourceLinks: [String]!
   tags: [String]!
   pictures: [String]!
-  ingredients: [IngredientDTO]
-  steps: [StepDTO]
+  ingredients: [IngredientDTO!]
+  steps: [StepDTO!]
+}
+
+input FilterRecipesInput {
+  name: String
+  tags: [String!]
 }
 
 input CreateRecipeInput {
@@ -93,7 +98,8 @@ input UpdateStepInput {
 }
 
 type Query {
-  recipes: [RecipeDTO]
+  recipes: [RecipeDTO]!
+  filterRecipes(filterRecipesInput: FilterRecipesInput): [RecipeDTO]!
   recipe(id: String!): RecipeDTO
   recipeBySlug(slug: String!): RecipeDTO
 }

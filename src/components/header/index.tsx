@@ -1,5 +1,5 @@
 import React from 'react'
-import { Plus } from 'react-bootstrap-icons'
+import { Plus, Search } from 'react-bootstrap-icons'
 import {
   Link
 } from 'react-router-dom'
@@ -7,9 +7,9 @@ import KuukNavLink from './kuuk-nav-link'
 
 export function Header() {
   return <aside
-    className="flex flex-col items-center bg-white text-gray-700 shadow"
+    className="flex flex-col items-center bg-white text-gray-700 shadow w-16"
   >
-    <div className="h-16 flex items-center">
+    <div className="w-full h-16 flex items-center hover:bg-gray-100">
       <Link className="h-6 w-6 mx-auto" to="/">
         <img
           className="h-6 w-6 mx-auto"
@@ -18,6 +18,9 @@ export function Header() {
       </Link>
     </div>
 
-    <KuukNavLink to="/createRecipe" icon={<Plus/>}/>
+    <ul className="w-full">
+      <KuukNavLink to="/createRecipe" icon={<Plus size={28} />} />
+      <KuukNavLink to="/search" icon={<Search size={16} />} />
+    </ul>
   </aside>
 }

@@ -9,19 +9,23 @@ import { Header } from './components/header'
 import { CreateRecipe } from './views/createRecipe'
 import { Home } from './views/home'
 import { RecipePage } from './views/recipe'
+import { Search } from './views/search'
 
 function App() {
   return (
     <Router>
       <div className="h-full w-screen min-h-screen flex bg-gray-100">
         <Header />
-        <main className="p-b p-4">
+        <main className="w-full">
           <Switch>
             <Route path="/recipe/:slug">
               <RecipePage />
             </Route>
             <Route path="/createRecipe">
               <CreateRecipe />
+            </Route>
+            <Route path="/search">
+              <Search />
             </Route>
             <Route path="/">
               <Home />

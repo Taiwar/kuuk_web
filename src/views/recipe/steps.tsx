@@ -15,7 +15,7 @@ const ADD_STEP = gql`
 `
 
 export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
-  const { register, handleSubmit } = useForm()
+  const { register, handleSubmit, reset } = useForm()
   const [addStep] = useMutation(ADD_STEP, {
     update(cache, { data: { addStep } }) {
       cache.modify({
@@ -62,7 +62,9 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
           description: addStepInput.description
         }
       }
-    }).then()
+    }).then(() => {
+      reset()
+    })
   }
 
   return <div>
@@ -80,10 +82,10 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
     <form onSubmit={handleSubmit(onAddStepSubmit)}>
       <div className="grid grid-cols-5 gap-1 lg:w-1/2">
         <div className="col-span-1">
-          <input className="block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Name" {...register('name')} />
+          <input required className="block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Name*" {...register('name')} />
         </div>
         <div className="col-span-3">
-          <input className="block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Description" {...register('description')} />
+          <textarea className="block w-full rounded-md border-gray-300 shadow-sm" placeholder="Description" {...register('description')} />
         </div>
         <div className="col-span-1">
           <button className="rounded-full p-1.5 shadow bg-pink-400 text-white" type="submit">
