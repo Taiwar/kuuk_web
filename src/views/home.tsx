@@ -1,10 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 import React from 'react'
-import { Card, Col, Container, Row } from 'react-bootstrap'
+import { RecipeCard } from '../components/recipe-card'
 import { RecipeDTO } from '../shared/graphql'
-import {
-  Link
-} from 'react-router-dom'
 
 const FETCH_RECIPES = gql`
     query getRecipes {
@@ -22,22 +19,11 @@ export function Home() {
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error :(</p>
 
-  return <Container>
-        <Row>
+  return <div className="container">
+        <div className="grid grid-cols-4 gap-4">
             {
-                data.recipes.map((recipe: RecipeDTO) => (
-                    <Col key={recipe.id}>
-                      <Link to={`/recipe/${recipe.slug}`}>
-                        <Card className="hover:shadow-md">
-                          <Card.Body>
-                            <Card.Title>{recipe.name}</Card.Title>
-                            <Card.Body>{recipe.servings} servings</Card.Body>
-                          </Card.Body>
-                        </Card>
-                      </Link>
-                    </Col>
-                ))
+                data.recipes.map((recipe: RecipeDTO) => <RecipeCard recipe={recipe} key={recipe.id} />)
             }
-        </Row>
-    </Container>
+        </div>
+    </div>
 }

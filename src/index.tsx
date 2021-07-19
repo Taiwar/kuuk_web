@@ -5,8 +5,6 @@ import './index.css'
 import App from './App'
 import { client } from './services/apollo-client'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-
 ReactDOM.render(
     <React.StrictMode>
         <ApolloProvider client={client}>

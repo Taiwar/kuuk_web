@@ -70,8 +70,8 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
     })
   }
 
-  return <div className="p-4">
-    <h4 className="mb-3">Ingredients</h4>
+  return <div>
+    <h4 className="text-2xl my-3">Ingredients</h4>
     <div className="mb-4">
       {
         props.ingredients?.map((ingredient: IngredientDTO) => {

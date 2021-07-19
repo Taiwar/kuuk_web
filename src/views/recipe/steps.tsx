@@ -65,13 +65,13 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
     }).then()
   }
 
-  return <div className="p-4">
-    <h4 className="mb-3">Steps</h4>
+  return <div>
+    <h4 className="text-2xl my-3">Steps</h4>
     <div className="mb-4">
       {
         props.steps.map((step: StepDTO, i) => {
           return <div key={step.id} className="flex pb-2">
-            <span className="bg-pink-400 text-white w-7 h-7 text-center pb-0.5 rounded-circle mr-2">{i + 1}</span>
+            <span className="bg-pink-400 text-white w-7 h-7 text-center pb-0.5 rounded-full mr-2">{i + 1}</span>
             <span className="flex-1"><b>{step.name}</b> {step.description}</span>
           </div>
         })

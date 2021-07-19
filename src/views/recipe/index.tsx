@@ -1,6 +1,5 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
-import { Col, Container, Row } from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
 import { RecipeDTO } from '../../shared/graphql'
 import { RecipeIngredients } from './ingredients'
@@ -51,18 +50,16 @@ export function RecipePage() {
 
   const recipe = recipeResult.data.recipeBySlug as RecipeDTO
 
-  return <Container>
-    <Row>
-      <Col>
-        <div className="shadow rounded-lg">
-          <div className="bg-pink-300 p-4 rounded-top">
-            <h2 className="mb-0 text-white fw-bold">{recipe.name}</h2>
-          </div>
-          <RecipeMeta recipe={recipe} />
-          <RecipeIngredients recipeId={recipe.id} ingredients={recipe.ingredients || []} />
-          <RecipeSteps recipeId={recipe.id} steps={recipe.steps || []} />
-        </div>
-      </Col>
-    </Row>
-  </Container>
+  return <div className="container">
+    <div className="shadow rounded">
+      <div className="bg-pink-300 p-4 rounded-t-lg">
+        <h2 className="mb-0 text-white font-bold text-3xl">{recipe.name}</h2>
+      </div>
+      <RecipeMeta recipe={recipe} />
+      <div className="bg-white p-8 rounded-b-lg">
+        <RecipeIngredients recipeId={recipe.id} ingredients={recipe.ingredients || []} />
+        <RecipeSteps recipeId={recipe.id} steps={recipe.steps || []} />
+      </div>
+    </div>
+  </div>
 }
