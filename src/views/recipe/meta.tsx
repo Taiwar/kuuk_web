@@ -52,8 +52,7 @@ export function RecipeMeta(props: { recipe: RecipeDTO }) {
         }
       })
     }
-  }
-  )
+  })
 
   function handleDoubleClick() {
     setShowInputs(true)

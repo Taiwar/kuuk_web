@@ -5,6 +5,8 @@ import './index.css'
 import App from './App'
 import { client } from './services/apollo-client'
 
+import 'font-awesome/css/font-awesome.css'
+
 ReactDOM.render(
     <React.StrictMode>
         <ApolloProvider client={client}>
