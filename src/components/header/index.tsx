@@ -9,14 +9,14 @@ export function Header() {
   return <aside
     className="flex flex-col items-center bg-white text-gray-700 shadow w-16"
   >
-    <div className="w-full h-16 flex items-center hover:bg-gray-100">
-      <Link className="h-6 w-6 mx-auto" to="/">
+    <Link className="w-full h-16 flex items-center hover:bg-gray-100" to="/">
+      <div className="h-6 w-6 mx-auto">
         <img
           className="h-6 w-6 mx-auto"
           src="/logo512.png"
           alt="Kuuk logo"/>
-      </Link>
-    </div>
+      </div>
+    </Link>
 
     <ul className="w-full">
       <KuukNavLink to="/createRecipe" icon={<Plus size={28} />} />
