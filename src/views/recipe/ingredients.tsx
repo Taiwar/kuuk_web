@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
 import { Plus } from 'react-bootstrap-icons'
 import { useForm } from 'react-hook-form'
@@ -16,7 +16,9 @@ const ADD_INGREDIENT = gql`
 `
 
 export function RecipeIngredients(props: { recipeId: string, ingredients: IngredientDTO[] }) {
-  const { register, handleSubmit, reset } = useForm()
+  const [showForm, setShowForm] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
+  const { register, handleSubmit, reset, setFocus } = useForm()
   const [addIngredient] = useMutation(ADD_INGREDIENT, {
     update(cache, { data: { addIngredient } }) {
       cache.modify({
@@ -29,13 +31,13 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
                   const newIngredientRef = cache.writeFragment({
                     data: addIngredient,
                     fragment: gql`
-                                  fragment NewIngredient on IngredientDTO {
-                                      id
-                                      name
-                                      amount
-                                      unit
-                                  }
-                              `
+                                            fragment NewIngredient on IngredientDTO {
+                                                id
+                                                name
+                                                amount
+                                                unit
+                                            }
+                                        `
                   })
                   return [...existingIngredients, newIngredientRef]
                 }
@@ -49,7 +51,6 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
   })
 
   function onAddIngredientSubmit(data: AddIngredientInput & { amount: string }) {
-    console.log('submitting', data)
     const addIngredientInput: AddIngredientInput = {
       recipeID: props.recipeId,
       name: data.name,
@@ -72,8 +73,26 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
     })
   }
 
+  function handleClickAdd() {
+    setShowForm(true)
+  }
+
+  useEffect(() => {
+    if (showForm) {
+      window.scrollTo({ top: formRef.current?.offsetTop })
+      setFocus('amount')
+    }
+  }, [showForm])
+
   return <div>
-    <h4 className="text-2xl my-3">Ingredients</h4>
+    <div className="flex">
+      <h4 className="flex text-2xl my-3">Ingredients</h4>
+      <div hidden={showForm} className="ml-2 mt-3">
+        <button className="rounded-full p-1 shadow bg-pink-400 text-white" onClick={handleClickAdd}>
+          <Plus size={24}/>
+        </button>
+      </div>
+    </div>
     <div className="mb-4">
       {
         props.ingredients?.map((ingredient: IngredientDTO) => {
@@ -84,7 +103,7 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
         })
       }
     </div>
-    <form onSubmit={handleSubmit(onAddIngredientSubmit)}>
+    <form ref={formRef} hidden={!showForm} onSubmit={handleSubmit(onAddIngredientSubmit)}>
       <div className="grid grid-cols-7 gap-1 lg:w-1/2">
         <div className="col-span-2">
           <input required className="block w-full rounded-md border-gray-300 shadow-sm" type="number" placeholder="Amount*" {...register('amount')} />

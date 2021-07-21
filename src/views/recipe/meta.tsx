@@ -87,9 +87,9 @@ export function RecipeMeta(props: { recipe: RecipeDTO }) {
     })
   }
 
-  return <div>
+  return <div className="max-w-xl">
     <form onSubmit={handleSubmit(handleOnSubmit)}>
-      <div className="grid grid-cols-4" onDoubleClick={handleDoubleClick}>
+      <div className="grid grid-cols-4 gap-2 justify-items-center" onDoubleClick={handleDoubleClick}>
         <div>
           <h5 className="mb-0 text-white">
             <b hidden={showInputs}>{recipe.servings}</b>

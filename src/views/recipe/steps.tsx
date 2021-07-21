@@ -1,5 +1,5 @@
 import { gql, useMutation } from '@apollo/client'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Plus } from 'react-bootstrap-icons'
 import { useForm } from 'react-hook-form'
 import { AddStepInput, StepDTO } from '../../shared/graphql'
@@ -15,7 +15,9 @@ const ADD_STEP = gql`
 `
 
 export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
-  const { register, handleSubmit, reset } = useForm()
+  const [showForm, setShowForm] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
+  const { register, handleSubmit, reset, setFocus } = useForm()
   const [addStep] = useMutation(ADD_STEP, {
     update(cache, { data: { addStep } }) {
       cache.modify({
@@ -67,8 +69,26 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
     })
   }
 
+  function handleClickAdd() {
+    setShowForm(true)
+  }
+
+  useEffect(() => {
+    if (showForm) {
+      window.scrollTo({ top: formRef.current?.offsetTop })
+      setFocus('amount')
+    }
+  }, [showForm])
+
   return <div>
-    <h4 className="text-2xl my-3">Steps</h4>
+    <div className="flex">
+      <h4 className="flex text-2xl my-3">Steps</h4>
+      <div hidden={showForm} className="ml-2 mt-3">
+        <button className="rounded-full p-1 shadow bg-pink-400 text-white" onClick={handleClickAdd}>
+          <Plus size={24}/>
+        </button>
+      </div>
+    </div>
     <div className="mb-4">
       {
         props.steps.map((step: StepDTO, i) => {
@@ -79,7 +99,7 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
         })
       }
     </div>
-    <form onSubmit={handleSubmit(onAddStepSubmit)}>
+    <form ref={formRef} hidden={!showForm} onSubmit={handleSubmit(onAddStepSubmit)}>
       <div className="grid grid-cols-5 gap-1 lg:w-1/2">
         <div className="col-span-1">
           <input required className="block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Name*" {...register('name')} />
