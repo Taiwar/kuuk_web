@@ -3,6 +3,7 @@ import { gql, useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import { TopBar } from '../../components/top-bar'
 import { RecipeDTO } from '../../shared/graphql'
+import { RecipeDescription } from './description'
 import { RecipeIngredients } from './ingredients'
 import { RecipeMeta } from './meta'
 import { RecipeRating } from './rating'
@@ -63,7 +64,8 @@ export function RecipePage() {
         <div className="bg-pink-400 p-4">
           <RecipeMeta recipe={recipe} />
         </div>
-        <div className="bg-white p-8 rounded-b-lg">
+        <div className="bg-white px-8 py-4 rounded-b-lg">
+          <RecipeDescription recipe={recipe} />
           <RecipeIngredients recipeId={recipe.id} ingredients={recipe.ingredients || []} />
           <RecipeSteps recipeId={recipe.id} steps={recipe.steps || []} />
         </div>
