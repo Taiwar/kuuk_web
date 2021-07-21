@@ -1,6 +1,6 @@
 import { gql, useMutation } from '@apollo/client'
 import React, { useEffect, useRef, useState } from 'react'
-import { Plus } from 'react-bootstrap-icons'
+import { Plus, X } from 'react-bootstrap-icons'
 import { useForm } from 'react-hook-form'
 import { AddStepInput, StepDTO } from '../../shared/graphql'
 
@@ -73,10 +73,15 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
     setShowForm(true)
   }
 
+  function handleCancel(e: any) {
+    e.preventDefault()
+    setShowForm(false)
+  }
+
   useEffect(() => {
     if (showForm) {
       window.scrollTo({ top: formRef.current?.offsetTop })
-      setFocus('amount')
+      setFocus('name')
     }
   }, [showForm])
 
@@ -110,6 +115,9 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
         <div className="col-span-1">
           <button className="rounded-full p-1.5 shadow bg-pink-400 text-white" type="submit">
             <Plus size={32}/>
+          </button>
+          <button className="rounded-full p-1.5 shadow bg-pink-400 text-white ml-1" onClick={handleCancel}>
+            <X size={32}/>
           </button>
         </div>
       </div>

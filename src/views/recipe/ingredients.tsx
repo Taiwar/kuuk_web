@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
-import { Plus } from 'react-bootstrap-icons'
+import { Plus, X } from 'react-bootstrap-icons'
 import { useForm } from 'react-hook-form'
 import { AddIngredientInput, IngredientDTO } from '../../shared/graphql'
 
@@ -77,6 +77,11 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
     setShowForm(true)
   }
 
+  function handleCancel(e: any) {
+    e.preventDefault()
+    setShowForm(false)
+  }
+
   useEffect(() => {
     if (showForm) {
       window.scrollTo({ top: formRef.current?.offsetTop })
@@ -117,6 +122,9 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
         <div className="col">
           <button className="rounded-full p-1.5 shadow bg-pink-400 text-white" type="submit">
             <Plus size={32}/>
+          </button>
+          <button className="rounded-full p-1.5 shadow bg-pink-400 text-white ml-1" onClick={handleCancel}>
+            <X size={32}/>
           </button>
         </div>
       </div>

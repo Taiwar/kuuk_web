@@ -44,7 +44,6 @@ export function RecipeTags(props: { recipe: RecipeDTO }) {
   }
 
   function handleCancel(e: any) {
-    e.preventDefault()
     setShowForm(false)
   }
 
