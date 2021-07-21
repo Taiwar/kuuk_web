@@ -58,7 +58,7 @@ export function RecipePage() {
       <div className="shadow rounded">
         <div className="bg-pink-300 p-4 rounded-t-lg">
           <h2 className="mb-0 text-white font-bold text-3xl">{recipe.name}</h2>
-          <RecipeRating recipe={recipe} />
+          <RecipeRating size="3xl" recipe={recipe} />
         </div>
         <div className="bg-pink-400 p-4">
           <RecipeMeta recipe={recipe} />

@@ -1,9 +1,7 @@
 .star-rating {
   font-family: 'FontAwesome';
-  margin: 50px auto;
 }
 .star-rating > fieldset {
-  border: none;
   display: inline-block;
 }
 .star-rating > fieldset:not(:checked) > input {
@@ -18,16 +16,15 @@
   overflow: hidden;
   white-space: nowrap;
   cursor: pointer;
-  font-size: 200%;
-  color: yellow;
+  color: #fceb4d;
 }
 .star-rating > fieldset:not(:checked) > label:before {
   content: '\f006  ';
 }
 .star-rating > fieldset:not(:checked) > label:hover,
 .star-rating > fieldset:not(:checked) > label:hover ~ label {
-  color: yellow;
-  text-shadow: 0 0 3px yellow;
+  color: #ffed65;
+  text-shadow: 0 0 3px #fceb4d;
 }
 .star-rating > fieldset:not(:checked) > label:hover:before,
 .star-rating > fieldset:not(:checked) > label:hover ~ label:before {
