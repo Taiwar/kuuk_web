@@ -71,7 +71,7 @@ export function RecipeTags(props: { recipe: RecipeDTO }) {
     }
   }
 
-  return <div className='my-3 flex flex-wrap items-center'>
+  return <div className='my-3 flex flex-wrap items-center justify-center'>
     <div>
     {
       recipe.tags.map((tag) => <span
