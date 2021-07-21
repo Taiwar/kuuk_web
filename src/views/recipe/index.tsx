@@ -8,6 +8,7 @@ import { RecipeIngredients } from './ingredients'
 import { RecipeMeta } from './meta'
 import { RecipeRating } from './rating'
 import { RecipeSteps } from './steps'
+import { RecipeTags } from './tags'
 
 const FETCH_RECIPE = gql`
     query getRecipeBySlug($slug: String!) {
@@ -63,6 +64,7 @@ export function RecipePage() {
         </div>
         <div className="bg-pink-400 p-4">
           <RecipeMeta recipe={recipe} />
+          <RecipeTags recipe={recipe} />
         </div>
         <div className="bg-white px-8 py-4 rounded-b-lg">
           <RecipeDescription recipe={recipe} />
