@@ -102,7 +102,7 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
       {
         props.ingredients?.map((ingredient: IngredientDTO) => {
           return <div key={ingredient.id} className="flex">
-            <input className="mx-2" type="checkbox" />
+            <input className="mx-2 mt-1" type="checkbox" />
             <span className="flex-1"><b className="mr-1">{ingredient.amount} {ingredient.unit}</b> {ingredient.name}</span>
           </div>
         })
