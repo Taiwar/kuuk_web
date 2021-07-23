@@ -19,16 +19,11 @@ export function StepItem(props: StepItemProps) {
       description: step.description
     }
   })
-  const [fieldsEditable, setFieldsEditable] = useState({ name: false, description: false })
+  const [fieldsEditable, setFieldsEditable] = useState(false)
 
-  function handleOnItemDoubleClick(fieldName: string) {
+  function handleOnFormDoubleClick() {
     if (editable) {
-      const newFieldsEditable: any = {
-        name: false,
-        description: false
-      }
-      newFieldsEditable[fieldName] = true
-      setFieldsEditable(newFieldsEditable)
+      setFieldsEditable(true)
     }
   }
 
@@ -39,10 +34,7 @@ export function StepItem(props: StepItemProps) {
       description: data.description
     }
     updateStep(updateStepInput)
-    setFieldsEditable({
-      name: false,
-      description: false
-    })
+    setFieldsEditable(false)
   }
 
   function handleOnDelete(id: string) {
@@ -51,24 +43,24 @@ export function StepItem(props: StepItemProps) {
 
   function handleCancel(e: any) {
     e.preventDefault()
-    setFieldsEditable({
-      name: false,
-      description: false
-    })
+    setFieldsEditable(false)
   }
 
-  return <div key={step.id} className="flex">
-    <button hidden={!editable} className="rounded-full p-1 shadow bg-pink-400 text-white ml-1" onClick={() => handleOnDelete(step.id)}>
+  return <div key={step.id} className="grid grid-cols-12 max-w-3xl">
+    <button hidden={!editable} className="col-span-1 h-8 w-8 rounded-full px-2 my-0.5 shadow bg-pink-400 text-white mr-1" onClick={() => handleOnDelete(step.id)}>
       <Trash size={16}/>
     </button>
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex-1">
-        <span className="inline-block bg-pink-400 text-white text-center rounded-full mb-1 mr-2 w-7 h-7">{i + 1}</span>
-        <span className={`font-bold ${fieldsEditable.name ? 'hidden' : ''}`} onDoubleClick={() => handleOnItemDoubleClick('name')}>{step.name}</span>
-        <input hidden={!fieldsEditable.name} required className={`mx-2 w-50 rounded-md border-gray-300 shadow-sm ${fieldsEditable.name ? '' : 'hidden'}`} type="text" placeholder="Name*" {...register('name')} />
-        <p className={`inline ml-1 ${fieldsEditable.description ? 'hidden' : ''}`} onDoubleClick={() => handleOnItemDoubleClick('description')}>{step.description}</p>
-        <textarea className={`block w-full rounded-md border-gray-300 shadow-sm ${!fieldsEditable.description ? 'hidden' : ''}`} placeholder="Description" {...register('description')} />
-        <div className={`inline ${!fieldsEditable.name && !fieldsEditable.description ? 'hidden' : ''}`} >
+    <form className="col-span-11" onSubmit={handleSubmit(onSubmit)}>
+      <div className="grid grid-cols-11 justify-center" onDoubleClick={handleOnFormDoubleClick}>
+        <span className="col-span-1 inline-block bg-pink-400 text-white text-center rounded-full mb-1 mr-2 w-7 h-7">{i + 1}</span>
+
+        <span className={`col-span-4 font-bold ${fieldsEditable ? 'hidden' : ''}`}>{step.name}</span>
+        <input hidden={!fieldsEditable} required className={`col-span-3 mr-2 h-12 rounded-md border-gray-300 shadow-sm ${fieldsEditable ? '' : 'hidden'}`} type="text" placeholder="Name*" {...register('name')} />
+
+        <p className={`col-span-6 inline ml-1 ${fieldsEditable ? 'hidden' : ''}`}>{step.description}</p>
+        <textarea className={`col-span-5 rounded-md border-gray-300 shadow-sm ${!fieldsEditable ? 'hidden' : ''}`} placeholder="Description" {...register('description')} />
+
+        <div className={`col-span-2 ${!fieldsEditable ? 'hidden' : ''}`} >
           <button className="rounded-full p-1 shadow bg-pink-400 text-white ml-1" type="submit">
             <Check size={20}/>
           </button>

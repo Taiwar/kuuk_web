@@ -19,17 +19,11 @@ export function IngredientItem(props: IngredientItemProps) {
       name: ingredient.name
     }
   })
-  const [fieldsEditable, setFieldsEditable] = useState({ amount: false, unit: false, name: false })
+  const [fieldsEditable, setFieldsEditable] = useState(false)
 
-  function handleOnItemDoubleClick(fieldName: string) {
+  function handleOnFormDoubleClick() {
     if (editable) {
-      const newFieldsEditable: any = {
-        amount: false,
-        unit: false,
-        name: false
-      }
-      newFieldsEditable[fieldName] = true
-      setFieldsEditable(newFieldsEditable)
+      setFieldsEditable(true)
     }
   }
 
@@ -41,11 +35,7 @@ export function IngredientItem(props: IngredientItemProps) {
       unit: data.unit
     }
     updateIngredient(updateIngredientInput)
-    setFieldsEditable({
-      amount: false,
-      unit: false,
-      name: false
-    })
+    setFieldsEditable(false)
   }
 
   function handleOnDelete(id: string) {
@@ -54,14 +44,8 @@ export function IngredientItem(props: IngredientItemProps) {
 
   function handleCancel(e: any) {
     e.preventDefault()
-    setFieldsEditable({
-      amount: false,
-      unit: false,
-      name: false
-    })
+    setFieldsEditable(false)
   }
-
-  console.log(fieldsEditable, !fieldsEditable.amount && !fieldsEditable.unit && !fieldsEditable.name)
 
   return <div key={ingredient.id} className="flex">
     <button hidden={!editable} className="rounded-full p-1 shadow bg-pink-400 text-white ml-1" onClick={() => handleOnDelete(ingredient.id)}>
@@ -69,14 +53,14 @@ export function IngredientItem(props: IngredientItemProps) {
     </button>
     <input className="mx-2 mt-1" type="checkbox" />
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex-1 inline">
-        <span hidden={fieldsEditable.amount} className="font-bold" onDoubleClick={() => handleOnItemDoubleClick('amount')}>{ingredient.amount}</span>
-        <input hidden={!fieldsEditable.amount} required className={`mx-2 w-20 rounded-md border-gray-300 shadow-sm ${fieldsEditable.amount ? '' : 'hidden'}`} type="number" placeholder="Amount*" {...register('amount')}/>
-        <span hidden={fieldsEditable.unit} className="font-bold mr-1" onDoubleClick={() => handleOnItemDoubleClick('unit')}>{ingredient.unit}</span>
-        <input hidden={!fieldsEditable.unit} required className={`mx-2 w-20 rounded-md border-gray-300 shadow-sm ${fieldsEditable.unit ? '' : 'hidden'}`} type="text" placeholder="Unit*" {...register('unit')}/>
-        <span hidden={fieldsEditable.name} onDoubleClick={() => handleOnItemDoubleClick('name')}>{ingredient.name}</span>
-        <input hidden={!fieldsEditable.name} required className={`mx-2 w-50 rounded-md border-gray-300 shadow-sm ${fieldsEditable.name ? '' : 'hidden'}`} type="text" placeholder="Name*" {...register('name')}/>
-        <div className={`inline ${!fieldsEditable.amount && !fieldsEditable.unit && !fieldsEditable.name ? 'hidden' : ''}`} >
+      <div className="flex-1 inline" onDoubleClick={handleOnFormDoubleClick}>
+        <span hidden={fieldsEditable} className="font-bold">{ingredient.amount}</span>
+        <input hidden={!fieldsEditable} required className={`mx-2 w-20 rounded-md border-gray-300 shadow-sm ${fieldsEditable ? '' : 'hidden'}`} type="number" placeholder="Amount*" {...register('amount')}/>
+        <span hidden={fieldsEditable} className="font-bold mr-1">{ingredient.unit}</span>
+        <input hidden={!fieldsEditable} required className={`mx-2 w-20 rounded-md border-gray-300 shadow-sm ${fieldsEditable ? '' : 'hidden'}`} type="text" placeholder="Unit*" {...register('unit')}/>
+        <span hidden={fieldsEditable}>{ingredient.name}</span>
+        <input hidden={!fieldsEditable} required className={`mx-2 w-50 rounded-md border-gray-300 shadow-sm ${fieldsEditable ? '' : 'hidden'}`} type="text" placeholder="Name*" {...register('name')}/>
+        <div className={`inline ${!fieldsEditable ? 'hidden' : ''}`} >
           <button className="rounded-full p-1 shadow bg-pink-400 text-white ml-1" type="submit">
             <Check size={20}/>
           </button>
