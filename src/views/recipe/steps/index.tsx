@@ -204,8 +204,8 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
     </div>
     <div className="mb-4">
       {
-        props.steps?.map((step: StepDTO) => {
-          return <StepItem key={step.id} step={step} editable={editable} updateStep={onUpdateStepSubmit} deleteStep={onDeleteStepSubmit}/>
+        props.steps?.map((step: StepDTO, i) => {
+          return <StepItem i={i} key={step.id} step={step} editable={editable} updateStep={onUpdateStepSubmit} deleteStep={onDeleteStepSubmit}/>
         })
       }
     </div>
