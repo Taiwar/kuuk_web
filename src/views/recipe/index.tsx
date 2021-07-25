@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { gql, useQuery } from '@apollo/client'
+import { Pencil, PencilFill } from 'react-bootstrap-icons'
 import { useParams } from 'react-router-dom'
 import { TopBar } from '../../components/top-bar'
 import { RecipeDTO } from '../../shared/graphql'
@@ -44,6 +45,7 @@ const FETCH_RECIPE = gql`
 
 export function RecipePage() {
   const { slug } = useParams() as any
+  const [heroEditable, setHeroEditable] = useState(false)
   const recipeResult = useQuery(FETCH_RECIPE, {
     variables: { slug },
     pollInterval: 20000
@@ -54,6 +56,10 @@ export function RecipePage() {
 
   const recipe = recipeResult.data.recipeBySlug as RecipeDTO
 
+  function handleClickHeroEdit() {
+    setHeroEditable(!heroEditable)
+  }
+
   return <div>
     <TopBar />
     <div className="container ml-4">
@@ -63,8 +69,11 @@ export function RecipePage() {
           <RecipeRating size="3xl" recipe={recipe} />
         </div>
         <div className="bg-pink-400 p-4">
-          <RecipeMeta recipe={recipe} />
-          <RecipeTags recipe={recipe} />
+          <RecipeMeta recipe={recipe} editable={heroEditable} />
+          <RecipeTags recipe={recipe} editable={heroEditable} />
+          <button className="block rounded-full p-2 shadow bg-pink-300 text-white ml-1 hover:shadow-lg float-right" onClick={handleClickHeroEdit}>
+            { heroEditable ? <Pencil size={24} /> : <PencilFill size={24}/> }
+          </button>
         </div>
         <div className="bg-white px-8 py-4 rounded-b-lg">
           <RecipeDescription recipe={recipe} />

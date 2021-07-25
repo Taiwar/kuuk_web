@@ -13,8 +13,8 @@ const UPDATE_RECIPE = gql`
     }
 `
 
-export function RecipeTags(props: { recipe: RecipeDTO }) {
-  const { recipe } = props
+export function RecipeTags(props: { recipe: RecipeDTO, editable: boolean }) {
+  const { recipe, editable } = props
   const inputRef = useRef<HTMLInputElement>(null)
   const [newTag, setNewTag] = useState('')
   const [showForm, setShowForm] = useState(false)
@@ -43,7 +43,24 @@ export function RecipeTags(props: { recipe: RecipeDTO }) {
     setShowForm(true)
   }
 
-  function handleCancel(e: any) {
+  function handleClickRemove(tag: string) {
+    const updateRecipeInput: UpdateRecipeInput = {
+      id: recipe.id,
+      tags: recipe.tags.filter((t) => t !== tag)
+    }
+    updateRecipe({
+      variables: { updateRecipeInput },
+      optimisticResponse: {
+        updateRecipe: {
+          __typename: 'RecipeDTO',
+          id: recipe.id,
+          tags: updateRecipeInput.tags
+        }
+      }
+    })
+  }
+
+  function handleCancel() {
     setShowForm(false)
   }
 
@@ -70,16 +87,20 @@ export function RecipeTags(props: { recipe: RecipeDTO }) {
     }
   }
 
-  return <div className='my-3 flex flex-wrap items-center justify-center'>
-    <div>
-    {
-      recipe.tags.map((tag) => <span
-          key={tag}
-          className="m-1 bg-gray-100 hover:bg-gray-200 rounded-full px-2 font-bold text-sm leading-loose cursor-pointer py-1">{tag}
-      </span>
-      )
-    }
-    <span hidden={showForm} className="m-1 bg-gray-100 hover:bg-gray-200 rounded-full px-2 font-bold text-sm leading-loose cursor-pointer py-1" onClick={handleClickAdd}>
+  return <div className='mt-2 flex justify-center'>
+    <div className="flex justify-center">
+      {
+        recipe.tags.map((tag) => <div key={tag} className="flex-1 max-w-10 inline-block cursor-pointer mx-1 bg-gray-100 rounded-full px-2 flex h-10">
+          <span
+              className="flex-1 font-bold text-sm my-auto text-center">{tag}
+          </span>
+          <button className={`flex-1 inline hover:bg-gray-200 rounded-full ${editable ? '' : 'hidden'}`} onClick={() => handleClickRemove(tag)}>
+            <X size={24} className=""/>
+          </button>
+          </div>
+        )
+      }
+      <span className={`${editable && !showForm ? '' : 'hidden'} bg-gray-100 hover:bg-gray-200 rounded-full px-2 font-bold text-sm leading-loose cursor-pointer py-1`} onClick={handleClickAdd}>
       + Add tag
     </span>
     </div>
