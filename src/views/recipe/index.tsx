@@ -9,6 +9,7 @@ import { RecipeIngredients } from './ingredients'
 import { RecipeMeta } from './meta'
 import { RecipeNotes } from './notes'
 import { RecipeRating } from './rating'
+import { RecipeSourceLinks } from './source-links'
 import { RecipeSteps } from './steps'
 import { RecipeTags } from './tags'
 
@@ -86,6 +87,7 @@ export function RecipePage() {
           <RecipeIngredients recipeId={recipe.id} ingredients={recipe.ingredients || []} />
           <RecipeSteps recipeId={recipe.id} steps={recipe.steps || []} />
           <RecipeNotes recipeId={recipe.id} notes={recipe.notes || []} />
+          <RecipeSourceLinks recipe={recipe} />
         </div>
       </div>
     </div>
