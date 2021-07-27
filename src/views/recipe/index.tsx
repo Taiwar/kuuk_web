@@ -63,6 +63,8 @@ export function RecipePage() {
 
   const recipe = recipeResult.data.recipeBySlug as RecipeDTO
 
+  if (recipeResult.loading) return <p>Loading...</p>
+
   function handleClickHeroEdit() {
     setHeroEditable(!heroEditable)
   }

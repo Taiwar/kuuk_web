@@ -110,8 +110,8 @@ export function RecipeSourceLinks(props: { recipe: RecipeDTO }) {
     </div>
     <div className="mb-4">
       {
-        recipe.sourceLinks.map((sourceLink) => (
-            <div key={sourceLink} className="flex mt-1">
+        recipe.sourceLinks.map((sourceLink, i) => (
+            <div key={i} className="flex mt-1">
               <span className={`inline-block bg-pink-400 rounded-full mb-1 mr-2 w-3 h-3 my-auto ${editable ? 'hidden' : ''}`} />
               <button hidden={!editable} className="rounded-full p-1 shadow bg-pink-400 text-white ml-1" onClick={() => handleClickRemove(sourceLink)}>
                 <Trash size={16}/>

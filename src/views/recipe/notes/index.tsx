@@ -147,7 +147,7 @@ export function RecipeNotes(props: { recipeId: string, notes: NoteDTO[] }) {
     updateNote({
       variables: { updateNoteInput },
       optimisticResponse: {
-        updateIngredient: {
+        updateNote: {
           __typename: 'NoteDTO',
           id: updateNoteInput.id,
           name: updateNoteInput.name,

@@ -128,16 +128,9 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
       name: data.name,
       description: data.description
     }
+    // TODO: Adding an optimistic response leads to a series of errors here for some reason
     addStep({
-      variables: { addStepInput },
-      optimisticResponse: {
-        addStep: {
-          __typename: 'StepDTO',
-          id: 'temp-id',
-          name: addStepInput.name,
-          description: addStepInput.description
-        }
-      }
+      variables: { addStepInput }
     }).then(() => {
       reset()
     })
@@ -147,7 +140,7 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
     updateStep({
       variables: { updateStepInput },
       optimisticResponse: {
-        updateIngredient: {
+        updateStep: {
           __typename: 'StepDTO',
           id: updateStepInput.id,
           name: updateStepInput.name,

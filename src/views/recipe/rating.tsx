@@ -49,7 +49,6 @@ export function RecipeRating(props: { recipe: RecipeDTO, size: 'xl' | '2xl' | '3
         id: recipe.id,
         rating: watchRating
       }
-      console.log('updating rating', updateRecipeInput)
       updateRecipe({
         variables: { updateRecipeInput },
         optimisticResponse: {
@@ -62,8 +61,6 @@ export function RecipeRating(props: { recipe: RecipeDTO, size: 'xl' | '2xl' | '3
       })
     }
   }, [watchRating])
-
-  console.log('rating', recipe.rating)
 
   return <div className="star-rating">
     <fieldset>
