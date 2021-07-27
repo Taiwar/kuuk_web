@@ -7,6 +7,7 @@ import { RecipeDTO } from '../../shared/graphql'
 import { RecipeDescription } from './description'
 import { RecipeIngredients } from './ingredients'
 import { RecipeMeta } from './meta'
+import { RecipeNotes } from './notes'
 import { RecipeRating } from './rating'
 import { RecipeSteps } from './steps'
 import { RecipeTags } from './tags'
@@ -24,7 +25,6 @@ const FETCH_RECIPE = gql`
             servings
             rating
             description
-            notes
             sourceLinks
             tags
             pictures
@@ -35,6 +35,12 @@ const FETCH_RECIPE = gql`
                 unit
             }
             steps {
+                id
+                name
+                description
+                picture
+            }
+            notes {
                 id
                 name
                 description
@@ -79,6 +85,7 @@ export function RecipePage() {
           <RecipeDescription recipe={recipe} />
           <RecipeIngredients recipeId={recipe.id} ingredients={recipe.ingredients || []} />
           <RecipeSteps recipeId={recipe.id} steps={recipe.steps || []} />
+          <RecipeNotes recipeId={recipe.id} notes={recipe.notes || []} />
         </div>
       </div>
     </div>

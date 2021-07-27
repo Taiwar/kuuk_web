@@ -1,22 +1,22 @@
 import React, { useState } from 'react'
 import { Check, Trash, X } from 'react-bootstrap-icons'
 import { useForm } from 'react-hook-form'
-import { StepDTO, UpdateStepInput } from '../../../shared/graphql'
+import { NoteDTO, UpdateNoteInput } from '../../../shared/graphql'
 
-type StepItemProps = {
+type NoteItemProps = {
   i: number,
-  step: StepDTO,
+  note: NoteDTO,
   editable: boolean,
-  updateStep: (input: UpdateStepInput) => void,
-  deleteStep: (id: string) => void
+  updateNote: (input: UpdateNoteInput) => void,
+  deleteNote: (id: string) => void
 }
 
-export function StepItem(props: StepItemProps) {
-  const { step, editable, updateStep, deleteStep, i } = props
+export function NoteItem(props: NoteItemProps) {
+  const { note, editable, updateNote, deleteNote, i } = props
   const { register, handleSubmit } = useForm({
     defaultValues: {
-      name: step.name,
-      description: step.description
+      name: note.name,
+      description: note.description
     }
   })
   const [fieldsEditable, setFieldsEditable] = useState(false)
@@ -27,18 +27,18 @@ export function StepItem(props: StepItemProps) {
     }
   }
 
-  function onSubmit(data: UpdateStepInput) {
-    const updateStepInput: UpdateStepInput = {
-      id: step.id,
+  function onSubmit(data: UpdateNoteInput) {
+    const updateNoteInput: UpdateNoteInput = {
+      id: note.id,
       name: data.name,
       description: data.description
     }
-    updateStep(updateStepInput)
+    updateNote(updateNoteInput)
     setFieldsEditable(false)
   }
 
   function handleOnDelete() {
-    deleteStep(step.id)
+    deleteNote(note.id)
   }
 
   function handleCancel(e: any) {
@@ -46,7 +46,7 @@ export function StepItem(props: StepItemProps) {
     setFieldsEditable(false)
   }
 
-  return <div key={step.id} className="grid grid-cols-12 max-w-3xl">
+  return <div key={note.id} className="grid grid-cols-12 max-w-3xl">
     <button hidden={!editable} className="col-span-1 h-8 w-8 rounded-full px-2 my-0.5 shadow bg-pink-400 text-white mr-1" onClick={handleOnDelete}>
       <Trash size={16}/>
     </button>
@@ -54,10 +54,10 @@ export function StepItem(props: StepItemProps) {
       <div className="grid grid-cols-11 justify-center" onDoubleClick={handleOnFormDoubleClick}>
         <span className="col-span-1 inline-block bg-pink-400 text-white text-center rounded-full mb-1 mr-2 w-7 h-7">{i + 1}</span>
 
-        <span className={`col-span-4 font-bold ${fieldsEditable ? 'hidden' : ''}`}>{step.name}</span>
+        <span className={`col-span-4 font-bold ${fieldsEditable ? 'hidden' : ''}`}>{note.name}</span>
         <input hidden={!fieldsEditable} required className={`col-span-3 mr-2 h-12 rounded-md border-gray-300 shadow-sm ${fieldsEditable ? '' : 'hidden'}`} type="text" placeholder="Name*" {...register('name')} />
 
-        <p className={`col-span-6 inline ml-1 ${fieldsEditable ? 'hidden' : ''}`}>{step.description}</p>
+        <p className={`col-span-6 inline ml-1 ${fieldsEditable ? 'hidden' : ''}`}>{note.description}</p>
         <textarea className={`col-span-5 rounded-md border-gray-300 shadow-sm ${!fieldsEditable ? 'hidden' : ''}`} placeholder="Description" {...register('description')} />
 
         <div className={`col-span-2 ${!fieldsEditable ? 'hidden' : ''}`} >

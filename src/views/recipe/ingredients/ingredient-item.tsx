@@ -38,8 +38,8 @@ export function IngredientItem(props: IngredientItemProps) {
     setFieldsEditable(false)
   }
 
-  function handleOnDelete(id: string) {
-    deleteIngredient(id)
+  function handleOnDelete() {
+    deleteIngredient(ingredient.id)
   }
 
   function handleCancel(e: any) {
@@ -48,7 +48,7 @@ export function IngredientItem(props: IngredientItemProps) {
   }
 
   return <div key={ingredient.id} className="flex">
-    <button hidden={!editable} className="rounded-full p-1 shadow bg-pink-400 text-white ml-1" onClick={() => handleOnDelete(ingredient.id)}>
+    <button hidden={!editable} className="rounded-full p-1 shadow bg-pink-400 text-white ml-1" onClick={handleOnDelete}>
       <Trash size={16}/>
     </button>
     <input className="mx-2 mt-1" type="checkbox" />
