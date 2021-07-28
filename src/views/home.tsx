@@ -10,6 +10,7 @@ const FETCH_RECIPES = gql`
             name
             slug
             servings
+            tags
         }
     }
 `
