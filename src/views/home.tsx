@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import React from 'react'
+import { LoadingSpinner } from '../components/loading-spinner'
 import { RecipeCard } from '../components/recipe-card'
 import { RecipeDTO } from '../shared/graphql'
 
@@ -17,8 +18,8 @@ const FETCH_RECIPES = gql`
 
 export function Home() {
   const { loading, error, data } = useQuery(FETCH_RECIPES)
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error :(</p>
+  if (loading) return <LoadingSpinner />
+  if (error) return <p>Error {error}</p>
 
   return <div className="container p-4">
         <div className="grid grid-cols-4 gap-4">

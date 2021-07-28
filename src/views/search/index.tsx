@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { Search as SearchIcon } from 'react-bootstrap-icons'
 import { useForm } from 'react-hook-form'
 import { useHistory, useLocation } from 'react-router-dom'
+import { LoadingSpinner } from '../../components/loading-spinner'
 import { RecipeCard } from '../../components/recipe-card'
 import { TopBar } from '../../components/top-bar'
 import { FilterRecipesInput, RecipeDTO } from '../../shared/graphql'
@@ -46,8 +47,8 @@ export function Search() {
     }
   }, [search])
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error :(</p>
+  if (loading) return <LoadingSpinner />
+  if (error) return <p>Error {error}</p>
 
   function onSubmitFilter(data: FilterRecipesInput) {
     const filterRecipesInput: FilterRecipesInput = {

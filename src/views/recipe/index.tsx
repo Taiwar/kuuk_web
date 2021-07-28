@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Pencil, PencilFill } from 'react-bootstrap-icons'
 import { useParams } from 'react-router-dom'
+import { LoadingSpinner } from '../../components/loading-spinner'
 import { TopBar } from '../../components/top-bar'
 import { RecipeDTO } from '../../shared/graphql'
 import { RecipeDescription } from './description'
@@ -53,17 +54,15 @@ const FETCH_RECIPE = gql`
 export function RecipePage() {
   const { slug } = useParams() as any
   const [heroEditable, setHeroEditable] = useState(false)
-  const recipeResult = useQuery(FETCH_RECIPE, {
+  const { loading, error, data } = useQuery(FETCH_RECIPE, {
     variables: { slug },
     pollInterval: 20000
   })
 
-  if (recipeResult.loading) return <p>Loading...</p>
-  if (recipeResult.error) return <p>Error :(</p>
+  if (loading) return <LoadingSpinner />
+  if (error) return <p>Error {error}</p>
 
-  const recipe = recipeResult.data.recipeBySlug as RecipeDTO
-
-  if (recipeResult.loading) return <p>Loading...</p>
+  const recipe = data.recipeBySlug as RecipeDTO
 
   function handleClickHeroEdit() {
     setHeroEditable(!heroEditable)
