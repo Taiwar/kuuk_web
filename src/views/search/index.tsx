@@ -37,7 +37,8 @@ export function Search() {
 
   const { register, handleSubmit } = useForm({
     defaultValues: {
-      name: filterRecipesInput?.name ?? ''
+      name: filterRecipesInput?.name ?? '',
+      tags: filterRecipesInput?.tags ?? ''
     }
   })
 
@@ -50,11 +51,11 @@ export function Search() {
   if (loading) return <LoadingSpinner />
   if (error) return <p>Error {error}</p>
 
-  function onSubmitFilter(data: FilterRecipesInput) {
+  function onSubmitFilter(data: FilterRecipesInput & { tags: string }) {
     const filterRecipesInput: FilterRecipesInput = {
-      name: data.name
+      name: data.name,
+      tags: data.tags.split(' ')
     }
-    console.log('querying for', filterRecipesInput)
     history.replace({
       pathname: '/search',
       search: '?filter=' + JSON.stringify(filterRecipesInput)
@@ -64,11 +65,12 @@ export function Search() {
 
   return <div>
     <TopBar />
-    <div className="container p-4">
+    <div className="container px-4">
       <div className="flex bg-white shadow rounded-lg p-4">
         <form onSubmit={handleSubmit(onSubmitFilter)}>
-          <div className="grid grid-cols-4 gap-4">
-            <input className="col-span-3 block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Search..." {...register('name')} />
+          <div className="grid grid-cols-5 gap-4">
+            <input className="col-span-2 block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Search..." {...register('name')} />
+            <input className="col-span-2 block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Tags" {...register('tags')} />
             <button className="col-span-1 rounded-full shadow bg-pink-400 text-white w-11" type="submit">
               <SearchIcon className="m-auto" size={24}/>
             </button>
