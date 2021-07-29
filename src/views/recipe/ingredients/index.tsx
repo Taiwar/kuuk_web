@@ -2,7 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
 import { Pencil, PencilFill, Plus, X } from 'react-bootstrap-icons'
 import { useForm } from 'react-hook-form'
-import { AddIngredientInput, IngredientDTO, UpdateIngredientInput } from '../../../shared/graphql'
+import {
+  AddIngredientInput,
+  GroupDTO,
+  IngredientDTO,
+  IngredientItemDTO, OrderedRecipeItemDTO,
+  UpdateIngredientInput
+} from '../../../shared/graphql'
 import { IngredientItem } from './ingredient-item'
 
 const ADD_INGREDIENT = gql`
@@ -28,15 +34,15 @@ const UPDATE_INGREDIENT = gql`
 `
 
 const REMOVE_INGREDIENT = gql`
-    mutation RemoveIngredient($ingredientId: String!, $recipeId: String!) {
-        removeIngredient(ingredientID: $ingredientId, recipeID: $recipeId) {
+    mutation RemoveIngredient($ingredientId: String!) {
+        removeIngredient(ingredientID: $ingredientId) {
             id
             success
         }
     }
 `
 
-export function RecipeIngredients(props: { recipeId: string, ingredients: IngredientDTO[] }) {
+export function RecipeIngredients(props: { recipeId: string, ingredients: IngredientItemDTO[] }) {
   const [editable, setEditable] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
@@ -211,9 +217,27 @@ export function RecipeIngredients(props: { recipeId: string, ingredients: Ingred
     </div>
     <div className="mb-4">
       {
-        props.ingredients?.map((ingredient: IngredientDTO) => {
-          return <IngredientItem key={ingredient.id} ingredient={ingredient} editable={editable} updateIngredient={onUpdateIngredientSubmit} deleteIngredient={onDeleteIngredientSubmit}/>
-        })
+        [...props.ingredients]
+          .sort((a, b) => a.sortNr - b.sortNr)
+          .map((item: any) => {
+            if (item.__typename === 'IngredientDTO') {
+              const ingredient = item as IngredientDTO
+              console.log(ingredient)
+              return <IngredientItem key={ingredient.id} ingredient={ingredient} editable={editable} updateIngredient={onUpdateIngredientSubmit} deleteIngredient={onDeleteIngredientSubmit}/>
+            } else if (item.__typename === 'GroupDTO') {
+              const ingredientGroup = item as GroupDTO
+              return <div>
+              <h4>{ingredientGroup.name}</h4>
+              {
+                ingredientGroup.items?.map((ingredient: OrderedRecipeItemDTO) =>
+                  <IngredientItem key={ingredient.id} ingredient={ingredient as IngredientDTO} editable={editable} updateIngredient={onUpdateIngredientSubmit} deleteIngredient={onDeleteIngredientSubmit}/>
+                )
+              }
+            </div>
+            } else {
+              return <div>Unknown item</div>
+            }
+          })
       }
     </div>
     <form ref={formRef} hidden={!showForm} onSubmit={handleSubmit(onAddIngredientSubmit)}>

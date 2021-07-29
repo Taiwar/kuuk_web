@@ -1,35 +1,55 @@
-interface OrderedRecipeItem {
+interface OrderedRecipeItemDTO {
   id: String!
+  recipeID: String!
   name: String!
   sortNr: Int!
-  group: String
 }
 
-type StepDTO implements OrderedRecipeItem {
+interface GroupItem {
+  groupID: String
+}
+
+type GroupDTO implements OrderedRecipeItemDTO {
   id: String!
+  recipeID: String!
+  name: String!
+  sortNr: Int!
+  itemType: String!
+  items: [OrderedRecipeItemDTO!]
+}
+
+type StepDTO implements OrderedRecipeItemDTO & GroupItem {
+  id: String!
+  recipeID: String!
   name: String!
   description: String
   picture: String
   sortNr: Int!
-  group: String
+  groupID: String
 }
 
-type NoteDTO {
+type NoteDTO implements OrderedRecipeItemDTO & GroupItem {
   id: String!
+  recipeID: String!
   name: String!
   description: String
   sortNr: Int!
-  group: String
+  groupID: String
 }
 
-type IngredientDTO {
+type IngredientDTO implements OrderedRecipeItemDTO & GroupItem {
   id: String!
+  recipeID: String!
   name: String!
   amount: Float!
   unit: String!
   sortNr: Int!
-  group: String
+  groupID: String
 }
+
+union IngredientItemDTO = IngredientDTO | GroupDTO
+union StepItemDTO = StepDTO | GroupDTO
+union NoteItemDTO = NoteDTO | GroupDTO
 
 type RecipeDTO {
   id: String!
@@ -45,9 +65,9 @@ type RecipeDTO {
   sourceLinks: [String!]!
   tags: [String!]!
   pictures: [String!]!
-  ingredients: [IngredientDTO!]
-  steps: [StepDTO!]
-  notes: [NoteDTO!]
+  ingredients: [IngredientItemDTO!]
+  steps: [StepItemDTO!]
+  notes: [NoteItemDTO!]
 }
 
 input FilterRecipesInput {
@@ -93,7 +113,7 @@ input AddIngredientInput {
   name: String!
   amount: Float!
   unit: String!
-  group: String
+  groupID: String
 }
 
 input UpdateIngredientInput {
@@ -102,7 +122,7 @@ input UpdateIngredientInput {
   amount: Float
   unit: String
   sortNr: Int
-  group: String
+  groupID: String
 }
 
 input AddStepInput {
@@ -110,7 +130,7 @@ input AddStepInput {
   name: String!
   description: String
   picture: String
-  group: String
+  groupID: String
 }
 
 input UpdateStepInput {
@@ -119,14 +139,14 @@ input UpdateStepInput {
   description: String
   picture: String
   sortNr: Int
-  group: String
+  groupID: String
 }
 
 input AddNoteInput {
   recipeID: String!
   name: String!
   description: String
-  group: String
+  groupID: String
 }
 
 input UpdateNoteInput {
@@ -134,7 +154,19 @@ input UpdateNoteInput {
   name: String
   description: String
   sortNr: Int
-  group: String
+  groupID: String
+}
+
+input AddGroupInput {
+  recipeID: String!
+  name: String!
+  itemType: String!
+}
+
+input UpdateGroupInput {
+  id: String!
+  name: String
+  sortNr: Int
 }
 
 type DeletionResponse {
@@ -155,13 +187,20 @@ type Mutation {
   createRecipe(createRecipeInput: CreateRecipeInput): RecipeDTO
   updateRecipe(updateRecipeInput: UpdateRecipeInput): RecipeDTO
   deleteRecipe(id: String!): DeletionResponse
+
   addIngredient(addIngredientInput: AddIngredientInput): IngredientDTO
   updateIngredient(updateIngredientInput: UpdateIngredientInput): IngredientDTO
-  removeIngredient(ingredientID: String!, recipeID: String): DeletionResponse
+  removeIngredient(ingredientID: String!): DeletionResponse
+
   addStep(addStepInput: AddStepInput): StepDTO
   updateStep(updateStepInput: UpdateStepInput): StepDTO
-  removeStep(stepID: String!, recipeID: String): DeletionResponse
+  removeStep(stepID: String!): DeletionResponse
+
   addNote(addNoteInput: AddNoteInput): NoteDTO
   updateNote(updateNoteInput: UpdateNoteInput): NoteDTO
-  removeNote(noteID: String!, recipeID: String): DeletionResponse
+  removeNote(noteID: String!): DeletionResponse
+
+  addGroup(addGroupInput: AddGroupInput): GroupDTO
+  updateGroup(updateGroupInput: UpdateGroupInput): GroupDTO
+  removeGroup(groupID: String!): DeletionResponse
 }
