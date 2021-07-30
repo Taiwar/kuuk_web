@@ -31,75 +31,49 @@ const FETCH_RECIPE = gql`
             tags
             pictures
             ingredients {
-                __typename
-                ...on IngredientDTO {
-                    id
-                    sortNr
-                    name
-                    amount
-                    unit
-                }
-                ...on GroupDTO {
-                    id
-                    sortNr
-                    name
-                    items {
-                        __typename
-                        ...on IngredientDTO {
-                            id
-                            sortNr
-                            name
-                            amount
-                            unit
-                        }
+                id
+                sortNr
+                name
+                itemType
+                items {
+                    __typename
+                    ...on IngredientDTO {
+                        id
+                        sortNr
+                        name
+                        amount
+                        unit
                     }
                 }
             }
             steps {
-                __typename
-                ...on StepDTO {
-                    id
-                    sortNr
-                    name
-                    description
-                    picture
-                }
-                ...on GroupDTO {
-                    id
-                    sortNr
-                    name
-                    items {
-                        __typename
-                        ...on StepDTO {
-                            id
-                            sortNr
-                            name
-                            description
-                            picture
-                        }
+                id
+                sortNr
+                name
+                itemType
+                items {
+                    __typename
+                    ...on StepDTO {
+                        id
+                        sortNr
+                        name
+                        description
+                        picture
                     }
                 }
             }
             notes {
-                __typename
-                ...on NoteDTO {
-                    id
-                    sortNr
-                    name
-                    description
-                }
-                ...on GroupDTO {
-                    id
-                    sortNr
-                    name
-                    items {
-                        __typename
-                        ...on NoteDTO {
-                            id
-                            sortNr
-                            name
-                            description
-                        }
+                id
+                sortNr
+                name
+                itemType
+                items {
+                    __typename
+                    ...on NoteDTO {
+                        id
+                        sortNr
+                        name
+                        description
                     }
                 }
             }
@@ -126,7 +100,6 @@ export function RecipePage() {
     setHeroEditable(!heroEditable)
   }
 
-  // TODO: Replace debug "[]" for recipe contents with recipe.xyz ?? []
   return <div>
     <TopBar />
     <div className="container ml-4">
@@ -144,9 +117,9 @@ export function RecipePage() {
         </div>
         <div className="bg-white px-8 py-4 rounded-b-lg">
           <RecipeDescription recipe={recipe} />
-          <RecipeIngredients recipeId={recipe.id} ingredients={recipe.ingredients || []} />
-          <RecipeSteps recipeId={recipe.id} steps={[]} />
-          <RecipeNotes recipeId={recipe.id} notes={[]} />
+          <RecipeIngredients recipeId={recipe.id} ingredientGroups={recipe.ingredients || []} />
+          <RecipeSteps recipeId={recipe.id} stepGroups={recipe.steps || []} />
+          <RecipeNotes recipeId={recipe.id} noteGroups={recipe.notes || []} />
           <RecipeSourceLinks recipe={recipe} />
         </div>
       </div>

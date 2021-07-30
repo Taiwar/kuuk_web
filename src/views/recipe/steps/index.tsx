@@ -1,9 +1,7 @@
 import { gql, useMutation } from '@apollo/client'
-import React, { useEffect, useRef, useState } from 'react'
-import { Pencil, PencilFill, Plus, X } from 'react-bootstrap-icons'
-import { useForm } from 'react-hook-form'
-import { AddStepInput, StepDTO, UpdateStepInput } from '../../../shared/graphql'
-import { StepItem } from './step-item'
+import React from 'react'
+import { AddStepInput, GroupDTO, UpdateStepInput } from '../../../shared/graphql'
+import { ItemGroup } from '../../../components/item-group'
 
 const ADD_STEP = gql`
     mutation AddStep($addStepInput: AddStepInput!) {
@@ -11,6 +9,8 @@ const ADD_STEP = gql`
             id
             name
             description
+            groupID
+            sortNr
         }
     }
 `
@@ -21,48 +21,42 @@ const UPDATE_STEP = gql`
             id
             name
             description
+            groupID
+            sortNr
         }
     }
 `
 
 const REMOVE_STEP = gql`
-    mutation RemoveStep($stepId: String!, $recipeId: String!) {
-        removeStep(stepID: $stepId, recipeID: $recipeId) {
+    mutation RemoveStep($stepId: String!) {
+        removeStep(stepID: $stepId) {
             id
+            groupID
             success
         }
     }
 `
 
-export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
-  const [editable, setEditable] = useState(false)
-  const [showForm, setShowForm] = useState(false)
-  const formRef = useRef<HTMLFormElement>(null)
-  const { register, handleSubmit, reset, setFocus } = useForm()
+export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] }) {
   const [addStep] = useMutation(ADD_STEP, {
     update(cache, { data: { addStep } }) {
       cache.modify({
+        id: `GroupDTO:${addStep.groupID}`,
         fields: {
-          recipeBySlug(recipeBySlugRef) {
-            cache.modify({
-              id: recipeBySlugRef.__ref,
-              fields: {
-                steps(existingSteps = []) {
-                  const newStepRef = cache.writeFragment({
-                    data: addStep,
-                    fragment: gql`
-                                            fragment NewStep on StepDTO {
-                                                id
-                                                name
-                                                description
-                                            }
-                                        `
-                  })
-                  return [...existingSteps, newStepRef]
-                }
-              }
+          items(existingItems = []) {
+            const ref = cache.writeFragment({
+              data: addStep,
+              fragment: gql`
+                              fragment NewStep on StepDTO {
+                                  id
+                                  name
+                                  description
+                                  groupID
+                                  sortNr
+                              }
+                          `
             })
-            return recipeBySlugRef
+            return [...existingItems, ref]
           }
         }
       })
@@ -71,29 +65,24 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
   const [updateStep] = useMutation(UPDATE_STEP, {
     update(cache, { data: { updateStep } }) {
       cache.modify({
+        id: `GroupDTO:${updateStep.groupID}`,
         fields: {
-          recipeBySlug(recipeBySlugRef) {
-            cache.modify({
-              id: recipeBySlugRef.__ref,
-              fields: {
-                steps(existingSteps = []) {
-                  const updatedStepRef = cache.writeFragment({
-                    data: updateStep,
-                    fragment: gql`
-                                            fragment NewStep on StepDTO {
-                                                id
-                                                name
-                                                description
-                                            }
-                                        `
-                  })
-                  return [...existingSteps.filter((i: {__ref: string}) => {
-                    return `StepDTO:${updateStep.id}` !== i.__ref
-                  }), updatedStepRef]
-                }
-              }
+          items(existingItems = []) {
+            const ref = cache.writeFragment({
+              data: updateStep,
+              fragment: gql`
+                              fragment NewStep on StepDTO {
+                                  id
+                                  name
+                                  description
+                                  groupID
+                                  sortNr
+                              }
+                          `
             })
-            return recipeBySlugRef
+            return [...existingItems.filter((i: {__ref: string}) => {
+              return `StepDTO:${updateStep.id}` !== i.__ref
+            }), ref]
           }
         }
       })
@@ -102,20 +91,13 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
   const [removeStep] = useMutation(REMOVE_STEP, {
     update(cache, { data: { removeStep } }) {
       cache.modify({
+        id: `GroupDTO:${removeStep.groupID}`,
         fields: {
-          recipeBySlug(recipeBySlugRef) {
-            cache.modify({
-              id: recipeBySlugRef.__ref,
-              fields: {
-                steps(existingSteps = []) {
-                  if (removeStep.success) {
-                    return existingSteps.filter((i: {__ref: string}) => `StepDTO:${removeStep.id}` !== i.__ref)
-                  }
-                  return existingSteps
-                }
-              }
-            })
-            return recipeBySlugRef
+          items(existingItems = []) {
+            if (removeStep.success) {
+              return existingItems.filter((i: {__ref: string}) => `StepDTO:${removeStep.id}` !== i.__ref)
+            }
+            return existingItems
           }
         }
       })
@@ -126,99 +108,66 @@ export function RecipeSteps(props: { recipeId: string, steps: StepDTO[] }) {
     const addStepInput: AddStepInput = {
       recipeID: props.recipeId,
       name: data.name,
-      description: data.description
+      description: data.description,
+      groupID: data.groupID
     }
-    // TODO: Adding an optimistic response leads to a series of errors here for some reason
-    addStep({
+    return addStep({
       variables: { addStepInput }
-    }).then(() => {
-      reset()
+      // TODO: Fix optimistic response
+      /* optimisticResponse: {
+        addStep: {
+          id: 'temp-id',
+          name: addStepInput.name,
+          description: addStepInput.description,
+          groupID: addStepInput.groupID,
+          sortNr: 1,
+          __typename: 'StepDTO'
+        }
+      } */
     })
   }
 
   function onUpdateStepSubmit(updateStepInput: UpdateStepInput) {
-    updateStep({
+    return updateStep({
       variables: { updateStepInput },
       optimisticResponse: {
         updateStep: {
-          __typename: 'StepDTO',
           id: updateStepInput.id,
           name: updateStepInput.name,
-          description: updateStepInput.description
+          description: updateStepInput.description,
+          groupID: updateStepInput.groupID,
+          sortNr: updateStepInput.sortNr,
+          __typename: 'StepDTO'
         }
       }
     })
   }
 
-  function onDeleteStepSubmit(stepId: string) {
-    removeStep({
-      variables: { stepId, recipeId: props.recipeId },
+  function onDeleteStepSubmit(stepId: string, groupId: string) {
+    return removeStep({
+      variables: { stepId },
       optimisticResponse: {
         removeStep: {
-          __typename: 'DeletionResponse',
           id: stepId,
-          success: true
+          groupID: groupId,
+          success: true,
+          __typename: 'GroupItemDeletionResponse'
         }
       }
     })
   }
-
-  function handleClickAdd() {
-    setShowForm(true)
-  }
-
-  function handleClickEdit() {
-    setEditable(!editable)
-  }
-
-  function handleCancel(e: any) {
-    e.preventDefault()
-    setShowForm(false)
-  }
-
-  useEffect(() => {
-    if (showForm) {
-      window.scrollTo({ top: formRef.current?.offsetTop })
-      setFocus('name')
-    }
-  }, [showForm])
 
   return <div>
     <div className="flex">
       <h4 className="flex text-2xl my-3">Steps</h4>
-      <div hidden={showForm} className="flex ml-2 mt-3 justify-center">
-        <button className="rounded-full p-1.5 h-9 shadow bg-pink-400 text-white hover:shadow-lg" onClick={handleClickAdd}>
-          <Plus size={24}/>
-        </button>
-        <button hidden={props.steps.length < 1} className="rounded-full p-3 h-9 shadow bg-pink-400 text-white ml-1 hover:shadow-lg" onClick={handleClickEdit}>
-          { editable ? <Pencil size={12} /> : <PencilFill size={12}/> }
-        </button>
-      </div>
     </div>
     <div className="mb-4">
       {
-        props.steps?.map((step: StepDTO, i) => {
-          return <StepItem i={i} key={step.id} step={step} editable={editable} updateStep={onUpdateStepSubmit} deleteStep={onDeleteStepSubmit}/>
-        })
+        [...props.stepGroups]
+          .sort((a, b) => a.sortNr - b.sortNr)
+          .map((group) =>
+                <ItemGroup key={group.id} group={group} add={onAddStepSubmit} update={onUpdateStepSubmit} delete={onDeleteStepSubmit}/>)
       }
     </div>
-    <form ref={formRef} hidden={!showForm} onSubmit={handleSubmit(onAddStepSubmit)}>
-      <div className="grid grid-cols-5 gap-1 lg:w-1/2">
-        <div className="col-span-1">
-          <input required className="block w-full rounded-md border-gray-300 shadow-sm" type="text" placeholder="Name*" {...register('name')} />
-        </div>
-        <div className="col-span-3">
-          <textarea className="block w-full rounded-md border-gray-300 shadow-sm" placeholder="Description" {...register('description')} />
-        </div>
-        <div className="col-span-1">
-          <button className="rounded-full p-1.5 shadow bg-pink-400 text-white" type="submit">
-            <Plus size={32}/>
-          </button>
-          <button className="rounded-full p-1.5 shadow bg-pink-400 text-white ml-1" onClick={handleCancel}>
-            <X size={32}/>
-          </button>
-        </div>
-      </div>
-    </form>
   </div>
 }

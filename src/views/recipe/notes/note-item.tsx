@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { NoteDTO, UpdateNoteInput } from '../../../shared/graphql'
 
 type NoteItemProps = {
-  i: number,
   note: NoteDTO,
   editable: boolean,
   updateNote: (input: UpdateNoteInput) => void,
@@ -12,7 +11,7 @@ type NoteItemProps = {
 }
 
 export function NoteItem(props: NoteItemProps) {
-  const { note, editable, updateNote, deleteNote, i } = props
+  const { note, editable, updateNote, deleteNote } = props
   const { register, handleSubmit } = useForm({
     defaultValues: {
       name: note.name,
@@ -52,7 +51,7 @@ export function NoteItem(props: NoteItemProps) {
     </button>
     <form className="col-span-11" onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-11 justify-center" onDoubleClick={handleOnFormDoubleClick}>
-        <span className="col-span-1 inline-block bg-pink-400 text-white text-center rounded-full mb-1 mr-2 w-7 h-7">{i + 1}</span>
+        <span className="col-span-1 inline-block bg-pink-400 text-white text-center rounded-full mb-1 mr-2 w-7 h-7">{note.sortNr}</span>
 
         <span className={`col-span-4 font-bold ${fieldsEditable ? 'hidden' : ''}`}>{note.name}</span>
         <input hidden={!fieldsEditable} required className={`col-span-3 mr-2 h-12 rounded-md border-gray-300 shadow-sm ${fieldsEditable ? '' : 'hidden'}`} type="text" placeholder="Name*" {...register('name')} />

@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { StepDTO, UpdateStepInput } from '../../../shared/graphql'
 
 type StepItemProps = {
-  i: number,
   step: StepDTO,
   editable: boolean,
   updateStep: (input: UpdateStepInput) => void,
@@ -12,7 +11,7 @@ type StepItemProps = {
 }
 
 export function StepItem(props: StepItemProps) {
-  const { step, editable, updateStep, deleteStep, i } = props
+  const { step, editable, updateStep, deleteStep } = props
   const { register, handleSubmit } = useForm({
     defaultValues: {
       name: step.name,
@@ -46,13 +45,15 @@ export function StepItem(props: StepItemProps) {
     setFieldsEditable(false)
   }
 
+  console.log('step', step)
+
   return <div key={step.id} className="grid grid-cols-12 max-w-3xl">
     <button hidden={!editable} className="col-span-1 h-8 w-8 rounded-full px-2 my-0.5 shadow bg-pink-400 text-white mr-1" onClick={handleOnDelete}>
       <Trash size={16}/>
     </button>
     <form className="col-span-11" onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-11 justify-center" onDoubleClick={handleOnFormDoubleClick}>
-        <span className="col-span-1 inline-block bg-pink-400 text-white text-center rounded-full mb-1 mr-2 w-7 h-7">{i + 1}</span>
+        <span className="col-span-1 inline-block bg-pink-400 text-white text-center rounded-full mb-1 mr-2 w-7 h-7">{step.sortNr}</span>
 
         <span className={`col-span-4 font-bold ${fieldsEditable ? 'hidden' : ''}`}>{step.name}</span>
         <input hidden={!fieldsEditable} required className={`col-span-3 mr-2 h-12 rounded-md border-gray-300 shadow-sm ${fieldsEditable ? '' : 'hidden'}`} type="text" placeholder="Name*" {...register('name')} />
