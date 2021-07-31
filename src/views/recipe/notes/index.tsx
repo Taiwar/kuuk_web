@@ -1,7 +1,9 @@
 import { gql, useMutation } from '@apollo/client'
 import React from 'react'
 import { AddNoteInput, UpdateNoteInput, GroupDTO } from '../../../shared/graphql'
-import { ItemGroup } from '../../../components/item-group'
+import { GroupItem } from '../../../components/group-item'
+import { RecipeSectionHeader } from '../../../components/recipe-section-header'
+import { GroupItemTypes } from '../../../shared/constants'
 
 const ADD_NOTE = gql`
     mutation AddNote($addNoteInput: AddNoteInput!) {
@@ -156,16 +158,26 @@ export function RecipeNotes(props: { recipeId: string, noteGroups: GroupDTO[] })
     })
   }
 
+  // TODO: Implement in group header?
+  function onDeleteGroupSubmit(id: string) {
+    return new Promise(() => {})
+  }
   return <div>
-    <div className="flex">
-      <h4 className="flex text-2xl my-3">Notes</h4>
-    </div>
+    <RecipeSectionHeader recipeId={props.recipeId} title={'Notes'} itemType={GroupItemTypes.NoteBE} />
     <div className="mb-4">
       {
         [...props.noteGroups]
           .sort((a, b) => a.sortNr - b.sortNr)
           .map((group) =>
-                <ItemGroup key={group.id} group={group} add={onAddNoteSubmit} update={onUpdateNoteSubmit} delete={onDeleteNoteSubmit}/>)
+                <GroupItem
+                    key={group.id}
+                    group={group}
+                    add={onAddNoteSubmit}
+                    update={onUpdateNoteSubmit}
+                    delete={onDeleteNoteSubmit}
+                    deleteGroup={onDeleteGroupSubmit}
+            />
+          )
       }
     </div>
   </div>
