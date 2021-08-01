@@ -45,8 +45,6 @@ export function StepItem(props: StepItemProps) {
     setFieldsEditable(false)
   }
 
-  console.log('step', step)
-
   return <div key={step.id} className="grid grid-cols-12 max-w-3xl">
     <button hidden={!editable} className="col-span-1 h-8 w-8 rounded-full px-2 my-0.5 shadow bg-pink-400 text-white mr-1" onClick={handleOnDelete}>
       <Trash size={16}/>

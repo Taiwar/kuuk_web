@@ -19,7 +19,7 @@ const FETCH_RECIPES = gql`
 export function Home() {
   const { loading, error, data } = useQuery(FETCH_RECIPES)
   if (loading) return <LoadingSpinner />
-  if (error) return <p>Error {error}</p>
+  if (error) return <p>Error {error.toString()}</p>
 
   return <div className="container p-4">
         <div className="grid grid-cols-4 gap-4">

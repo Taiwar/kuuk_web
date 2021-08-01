@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { AddGroupInput } from '../shared/graphql'
+import { AddGroupInput } from '../../../shared/graphql'
 import { Plus, X } from 'react-bootstrap-icons'
 import { useForm } from 'react-hook-form'
 

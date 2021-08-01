@@ -1,8 +1,7 @@
 import React from 'react'
 import { gql, useMutation } from '@apollo/client'
 import { AddIngredientInput, GroupDTO, UpdateIngredientInput } from '../../../shared/graphql'
-import { GroupItem } from '../../../components/group-item'
-import { RecipeSectionHeader } from '../../../components/recipe-section-header'
+import { RecipeItemsSection } from '../items-section'
 import { GroupItemTypes } from '../../../shared/constants'
 
 const ADD_INGREDIENT = gql`
@@ -51,15 +50,15 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
             const ref = cache.writeFragment({
               data: addIngredient,
               fragment: gql`
-                      fragment NewIngredient on IngredientDTO {
-                          id
-                          name
-                          amount
-                          unit
-                          groupID
-                          sortNr
-                      }
-                  `
+                                fragment NewIngredient on IngredientDTO {
+                                    id
+                                    name
+                                    amount
+                                    unit
+                                    groupID
+                                    sortNr
+                                }
+                            `
             })
             return [...existingItems, ref]
           }
@@ -77,15 +76,15 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
             const ref = cache.writeFragment({
               data: updateIngredient,
               fragment: gql`
-                              fragment NewIngredient on IngredientDTO {
-                                  id
-                                  name
-                                  amount
-                                  unit
-                                  groupID
-                                  sortNr
-                              }
-                          `
+                                fragment NewIngredient on IngredientDTO {
+                                    id
+                                    name
+                                    amount
+                                    unit
+                                    groupID
+                                    sortNr
+                                }
+                            `
             })
             return [...existingItems.filter((i: {__ref: string}) => {
               return `IngredientDTO:${updateIngredient.id}` !== i.__ref
@@ -167,27 +166,13 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
     })
   }
 
-  // TODO: Implement in group header?
-  function onDeleteGroupSubmit(id: string) {
-    return new Promise(() => {})
-  }
-  return <div>
-    <RecipeSectionHeader recipeId={props.recipeId} title={'Ingredients'} itemType={GroupItemTypes.IngredientBE} />
-    <div className="mb-4">
-      {
-        [...props.ingredientGroups]
-          .sort((a, b) => a.sortNr - b.sortNr)
-          .map((group) =>
-                <GroupItem
-                    key={group.id}
-                    group={group}
-                    add={onAddIngredientSubmit}
-                    update={onUpdateIngredientSubmit}
-                    delete={onDeleteIngredientSubmit}
-                    deleteGroup={onDeleteGroupSubmit}
-                />
-          )
-      }
-    </div>
-  </div>
+  return <RecipeItemsSection
+      recipeId={props.recipeId}
+      title={'Ingredients'}
+      groups={props.ingredientGroups}
+      itemType={GroupItemTypes.IngredientBE}
+      add={onAddIngredientSubmit}
+      update={onUpdateIngredientSubmit}
+      delete={onDeleteIngredientSubmit}
+  />
 }

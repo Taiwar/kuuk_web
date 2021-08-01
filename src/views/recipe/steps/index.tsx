@@ -1,9 +1,8 @@
 import { gql, useMutation } from '@apollo/client'
 import React from 'react'
 import { AddStepInput, GroupDTO, UpdateStepInput } from '../../../shared/graphql'
-import { GroupItem } from '../../../components/group-item'
-import { RecipeSectionHeader } from '../../../components/recipe-section-header'
 import { GroupItemTypes } from '../../../shared/constants'
+import { RecipeItemsSection } from '../items-section'
 
 const ADD_STEP = gql`
     mutation AddStep($addStepInput: AddStepInput!) {
@@ -159,27 +158,13 @@ export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] })
     })
   }
 
-  // TODO: Implement in group header?
-  function onDeleteGroupSubmit(id: string) {
-    return new Promise(() => {})
-  }
-
-  return <div>
-    <RecipeSectionHeader recipeId={props.recipeId} title={'Steps'} itemType={GroupItemTypes.StepBE} />
-    <div className="mb-4">
-      {
-        [...props.stepGroups]
-          .sort((a, b) => a.sortNr - b.sortNr)
-          .map((group) =>
-                <GroupItem
-                    key={group.id}
-                    group={group}
-                    add={onAddStepSubmit}
-                    update={onUpdateStepSubmit}
-                    delete={onDeleteStepSubmit}
-                    deleteGroup={onDeleteGroupSubmit}
-                />)
-      }
-    </div>
-  </div>
+  return <RecipeItemsSection
+      recipeId={props.recipeId}
+      title={'Steps'}
+      groups={props.stepGroups}
+      itemType={GroupItemTypes.StepBE}
+      add={onAddStepSubmit}
+      update={onUpdateStepSubmit}
+      delete={onDeleteStepSubmit}
+  />
 }

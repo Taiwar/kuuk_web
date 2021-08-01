@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { GroupForm } from './group-form'
+import { GroupForm } from '../views/recipe/groups/group-form'
 import { gql, useMutation } from '@apollo/client'
 import { GroupItemTypes } from '../shared/constants'
 import { AddGroupInput } from '../shared/graphql'
@@ -30,12 +30,13 @@ const NEW_GROUP_FRAGMENT = gql`
 type RecipeSectionHeaderProps = {
   recipeId: string,
   title: string,
-  itemType: GroupItemTypes
+  itemType: GroupItemTypes,
+  editable: boolean,
+  setEditable: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export function RecipeSectionHeader(props: RecipeSectionHeaderProps) {
   const [showForm, setShowForm] = useState(false)
-  const [editable, setEditable] = useState(false)
   const [addGroup] = useMutation(ADD_GROUP, {
     update(cache, { data: { addGroup } }) {
       cache.modify({
@@ -96,6 +97,10 @@ export function RecipeSectionHeader(props: RecipeSectionHeaderProps) {
     setShowForm(true)
   }
 
+  function handleOnEditClick() {
+    props.setEditable(!props.editable)
+  }
+
   return <div>
     <div className="flex">
       <h4 className="flex text-2xl my-3">{props.title}</h4>
@@ -103,8 +108,8 @@ export function RecipeSectionHeader(props: RecipeSectionHeaderProps) {
         <button className="rounded-full h-8 w-8 shadow bg-pink-400 text-white hover:shadow-lg pl-1 mt-3.5" onClick={handleClickAdd}>
           <Plus size={24}/>
         </button>
-        <button className="rounded-full h-8 w-8 shadow bg-pink-400 text-white hover:shadow-lg pl-2.5 ml-1 mt-3.5">
-          { editable ? <Pencil size={12} /> : <PencilFill size={12}/> }
+        <button className="rounded-full h-8 w-8 shadow bg-pink-400 text-white hover:shadow-lg pl-2.5 ml-1 mt-3.5" onClick={handleOnEditClick}>
+          { props.editable ? <Pencil size={12} /> : <PencilFill size={12}/> }
         </button>
       </div>
     </div>

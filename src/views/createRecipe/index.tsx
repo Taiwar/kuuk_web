@@ -41,7 +41,6 @@ export function CreateRecipe() {
   })
 
   function onSubmit(data: CreateRecipeInput & { servings: string }) {
-    console.log('submitting', data)
     const createRecipeInput: CreateRecipeInput = {
       name: data.name,
       servings: parseInt(data.servings)

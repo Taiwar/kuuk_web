@@ -32,6 +32,7 @@ const FETCH_RECIPE = gql`
             pictures
             ingredients {
                 id
+                recipeID
                 sortNr
                 name
                 itemType
@@ -48,6 +49,7 @@ const FETCH_RECIPE = gql`
             }
             steps {
                 id
+                recipeID
                 sortNr
                 name
                 itemType
@@ -64,6 +66,7 @@ const FETCH_RECIPE = gql`
             }
             notes {
                 id
+                recipeID
                 sortNr
                 name
                 itemType
