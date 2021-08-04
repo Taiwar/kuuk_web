@@ -3,6 +3,7 @@ import { gql, useMutation } from '@apollo/client'
 import { AddIngredientInput, GroupDTO, UpdateIngredientInput } from '../../../shared/graphql'
 import { RecipeItemsSection } from '../items-section'
 import { GroupItemTypes } from '../../../shared/constants'
+import CacheHelper from '../../../shared/cache-helper'
 
 const ADD_INGREDIENT = gql`
     mutation AddIngredient($addIngredientInput: AddIngredientInput!) {
@@ -26,6 +27,8 @@ const UPDATE_INGREDIENT = gql`
             unit
             groupID
             sortNr
+            prevGroupID
+            prevSortNr
         }
     }
 `
@@ -69,45 +72,13 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
 
   const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
     update(cache, { data: { updateIngredient } }) {
-      cache.modify({
-        id: `GroupDTO:${updateIngredient.groupID}`,
-        fields: {
-          items(existingItems = []) {
-            const ref = cache.writeFragment({
-              data: updateIngredient,
-              fragment: gql`
-                                fragment NewIngredient on IngredientDTO {
-                                    id
-                                    name
-                                    amount
-                                    unit
-                                    groupID
-                                    sortNr
-                                }
-                            `
-            })
-            return [...existingItems.filter((i: {__ref: string}) => {
-              return `IngredientDTO:${updateIngredient.id}` !== i.__ref
-            }), ref]
-          }
-        }
-      })
+      CacheHelper.updateIngredient(cache, updateIngredient)
     }
   })
 
   const [removeIngredient] = useMutation(REMOVE_INGREDIENT, {
     update(cache, { data: { removeIngredient } }) {
-      cache.modify({
-        id: `GroupDTO:${removeIngredient.groupID}`,
-        fields: {
-          items(existingItems = []) {
-            if (removeIngredient.success) {
-              return existingItems.filter((i: {__ref: string}) => `IngredientDTO:${removeIngredient.id}` !== i.__ref)
-            }
-            return existingItems
-          }
-        }
-      })
+      CacheHelper.removeIngredient(cache, removeIngredient)
     }
   })
 
@@ -135,7 +106,7 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
     })
   }
 
-  function onUpdateIngredientSubmit(updateIngredientInput: UpdateIngredientInput) {
+  function onUpdateIngredientSubmit(updateIngredientInput: UpdateIngredientInput, prevGroupId: string, prevSortNr?: number) {
     return updateIngredient({
       variables: { updateIngredientInput },
       optimisticResponse: {
@@ -146,6 +117,8 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
           unit: updateIngredientInput.unit,
           groupID: updateIngredientInput.groupID,
           sortNr: updateIngredientInput.sortNr,
+          prevGroupID: prevGroupId,
+          prevSortNr,
           __typename: 'IngredientDTO'
         }
       }

@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { ReactChild, useCallback, useState } from 'react'
+import update from 'immutability-helper'
 import { GroupDTO, IngredientDTO, NoteDTO, StepDTO } from '../../../shared/graphql'
 import { DEFAULT_GROUP_NAME, GroupItemTypes } from '../../../shared/constants'
 import { IngredientItem } from '../ingredients/ingredient-item'
@@ -9,6 +10,8 @@ import { IngredientForm } from '../ingredients/ingredient-form'
 import { StepForm } from '../steps/step-form'
 import { NoteForm } from '../notes/note-form'
 import { gql, useMutation } from '@apollo/client'
+import { MovableItem } from '../../../components/movable-item'
+import { Droppable } from 'react-beautiful-dnd'
 
 const REMOVE_GROUP = gql`
     mutation RemoveGroup($groupId: String!) {
@@ -22,7 +25,7 @@ const REMOVE_GROUP = gql`
 export type ItemGroupProps = {
   group: GroupDTO,
   add: (input: any) => Promise<any>,
-  update: (input: any) => Promise<any>,
+  update: (input: any, prevGroupId: string) => Promise<any>,
   delete: (id: string, groupId: string) => Promise<any>,
   editable: boolean
 }
@@ -122,22 +125,51 @@ export function GroupItem(props: ItemGroupProps) {
         </button>
       </div>
     </div>
-    {
-      [...props.group.items]
-        .sort((a, b) => a.sortNr - b.sortNr)
-        .map((item, i) => {
-          switch (props.group.itemType) {
-            case GroupItemTypes.IngredientBE:
-              return <IngredientItem key={i} ingredient={item as IngredientDTO} editable={itemEditable} updateIngredient={props.update} deleteIngredient={handleItemDelete} />
-            case GroupItemTypes.StepBE:
-              return <StepItem key={i} step={item as StepDTO} editable={itemEditable} updateStep={props.update} deleteStep={handleItemDelete} />
-            case GroupItemTypes.NoteBE:
-              return <NoteItem key={i} note={item as NoteDTO} editable={itemEditable} updateNote={props.update} deleteNote={handleItemDelete} />
-            default:
-              return <p key={i}>Unknown item {item}</p>
+    <Droppable droppableId={props.group.id}>
+      {
+        (provided) => <div {...provided.droppableProps} ref={provided.innerRef}>
+          {
+            [...props.group.items]
+              .sort((a, b) => a.sortNr - b.sortNr)
+              .map((item, i) => {
+                let itemComponent: ReactChild
+                switch (props.group.itemType) {
+                  case GroupItemTypes.IngredientBE:
+                    itemComponent = <IngredientItem
+                          ingredient={item as IngredientDTO}
+                          editable={itemEditable}
+                          updateIngredient={(input) => props.update(input, props.group.id)}
+                          deleteIngredient={handleItemDelete}
+                      />
+                    break
+                  case GroupItemTypes.StepBE:
+                    itemComponent = <StepItem
+                          step={item as StepDTO}
+                          editable={itemEditable}
+                          updateStep={(input) => props.update(input, props.group.id)}
+                          deleteStep={handleItemDelete}
+                      />
+                    break
+                  case GroupItemTypes.NoteBE:
+                    itemComponent = <NoteItem
+                          note={item as NoteDTO}
+                          editable={itemEditable}
+                          updateNote={(input) => props.update(input, props.group.id)}
+                          deleteNote={handleItemDelete}
+                      />
+                    break
+                  default:
+                    return <p key={i}>Unknown item {item}</p>
+                }
+                return <MovableItem key={item?.id} id={item?.id} index={item.sortNr}>
+                    {itemComponent}
+                  </MovableItem>
+              })
           }
-        })
-    }
+          {provided.placeholder}
+        </div>
+      }
+      </Droppable>
     {
       itemForm
     }
