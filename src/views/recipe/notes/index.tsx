@@ -3,6 +3,7 @@ import React from 'react'
 import { AddNoteInput, UpdateNoteInput, GroupDTO } from '../../../shared/graphql'
 import { GroupItemTypes } from '../../../shared/constants'
 import { RecipeItemsSection } from '../items-section'
+import CacheHelper from '../../../shared/cache-helper'
 
 const ADD_NOTE = gql`
     mutation AddNote($addNoteInput: AddNoteInput!) {
@@ -19,11 +20,18 @@ const ADD_NOTE = gql`
 const UPDATE_NOTE = gql`
     mutation UpdateNote($updateNoteInput: UpdateNoteInput!) {
         updateNote(updateNoteInput: $updateNoteInput) {
-            id
-            name
-            description
-            groupID
-            sortNr
+            item {
+                ... on NoteDTO {
+
+                    id
+                    name
+                    description
+                    groupID
+                    sortNr
+                }
+            }
+            prevSortNr
+            prevGroupID
         }
     }
 `
@@ -34,6 +42,7 @@ const REMOVE_NOTE = gql`
             id
             groupID
             success
+            sortNr
         }
     }
 `
@@ -41,67 +50,17 @@ const REMOVE_NOTE = gql`
 export function RecipeNotes(props: { recipeId: string, noteGroups: GroupDTO[] }) {
   const [addNote] = useMutation(ADD_NOTE, {
     update(cache, { data: { addNote } }) {
-      cache.modify({
-        id: `GroupDTO:${addNote.groupID}`,
-        fields: {
-          items(existingItems = []) {
-            const ref = cache.writeFragment({
-              data: addNote,
-              fragment: gql`
-                              fragment NewNote on NoteDTO {
-                                  id
-                                  name
-                                  description
-                                  groupID
-                                  sortNr
-                              }
-                          `
-            })
-            return [...existingItems, ref]
-          }
-        }
-      })
+      CacheHelper.addItem(cache, addNote, GroupItemTypes.NoteBE)
     }
   })
   const [updateNote] = useMutation(UPDATE_NOTE, {
     update(cache, { data: { updateNote } }) {
-      cache.modify({
-        id: `GroupDTO:${updateNote.groupID}`,
-        fields: {
-          items(existingItems = []) {
-            const ref = cache.writeFragment({
-              data: updateNote,
-              fragment: gql`
-                              fragment NewNote on NoteDTO {
-                                  id
-                                  name
-                                  description
-                                  groupID
-                                  sortNr
-                              }
-                          `
-            })
-            return [...existingItems.filter((i: {__ref: string}) => {
-              return `NoteDTO:${updateNote.id}` !== i.__ref
-            }), ref]
-          }
-        }
-      })
+      CacheHelper.updateItem(cache, updateNote, GroupItemTypes.NoteBE)
     }
   })
   const [removeNote] = useMutation(REMOVE_NOTE, {
     update(cache, { data: { removeNote } }) {
-      cache.modify({
-        id: `GroupDTO:${removeNote.groupID}`,
-        fields: {
-          items(existingItems = []) {
-            if (removeNote.success) {
-              return existingItems.filter((i: {__ref: string}) => `NoteDTO:${removeNote.id}` !== i.__ref)
-            }
-            return existingItems
-          }
-        }
-      })
+      CacheHelper.removeItem(cache, removeNote, GroupItemTypes.NoteBE)
     }
   })
 
@@ -119,31 +78,35 @@ export function RecipeNotes(props: { recipeId: string, noteGroups: GroupDTO[] })
           id: 'temp-id',
           name: addNoteInput.name,
           description: addNoteInput.description,
+          sortNr: props.noteGroups.filter((g) => g.id === data.groupID)[0].items.length,
           groupID: addNoteInput.groupID,
-          sortNr: 1,
           __typename: 'NoteDTO'
         }
       }
     })
   }
 
-  function onUpdateNoteSubmit(updateNoteInput: UpdateNoteInput) {
+  function onUpdateNoteSubmit(updateNoteInput: UpdateNoteInput, prevGroupId: string, prevSortNr?: number) {
     return updateNote({
       variables: { updateNoteInput },
       optimisticResponse: {
         updateNote: {
-          id: updateNoteInput.id,
-          name: updateNoteInput.name,
-          description: updateNoteInput.description,
-          groupID: updateNoteInput.groupID,
-          sortNr: updateNoteInput.sortNr,
-          __typename: 'NoteDTO'
+          item: {
+            id: updateNoteInput.id,
+            name: updateNoteInput.name,
+            description: updateNoteInput.description,
+            groupID: updateNoteInput.groupID,
+            sortNr: updateNoteInput.sortNr
+          },
+          prevGroupID: prevGroupId,
+          prevSortNr,
+          __typename: 'GroupItemUpdateResponse'
         }
       }
     })
   }
 
-  function onDeleteNoteSubmit(noteId: string, groupId: string) {
+  function onDeleteNoteSubmit(noteId: string, groupId: string, sortNr: number) {
     return removeNote({
       variables: { noteId },
       optimisticResponse: {
@@ -151,6 +114,7 @@ export function RecipeNotes(props: { recipeId: string, noteGroups: GroupDTO[] })
           id: noteId,
           groupID: groupId,
           success: true,
+          sortNr,
           __typename: 'GroupItemDeletionResponse'
         }
       }

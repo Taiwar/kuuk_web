@@ -3,6 +3,7 @@ import React from 'react'
 import { AddStepInput, GroupDTO, UpdateStepInput } from '../../../shared/graphql'
 import { GroupItemTypes } from '../../../shared/constants'
 import { RecipeItemsSection } from '../items-section'
+import CacheHelper from '../../../shared/cache-helper'
 
 const ADD_STEP = gql`
     mutation AddStep($addStepInput: AddStepInput!) {
@@ -10,6 +11,7 @@ const ADD_STEP = gql`
             id
             name
             description
+            picture
             groupID
             sortNr
         }
@@ -19,11 +21,17 @@ const ADD_STEP = gql`
 const UPDATE_STEP = gql`
     mutation UpdateStep($updateStepInput: UpdateStepInput!) {
         updateStep(updateStepInput: $updateStepInput) {
-            id
-            name
-            description
-            groupID
-            sortNr
+            item {
+                ... on StepDTO {
+                    id
+                    name
+                    description
+                    groupID
+                    sortNr
+                }
+            }
+            prevSortNr
+            prevGroupID
         }
     }
 `
@@ -34,6 +42,7 @@ const REMOVE_STEP = gql`
             id
             groupID
             success
+            sortNr
         }
     }
 `
@@ -41,67 +50,17 @@ const REMOVE_STEP = gql`
 export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] }) {
   const [addStep] = useMutation(ADD_STEP, {
     update(cache, { data: { addStep } }) {
-      cache.modify({
-        id: `GroupDTO:${addStep.groupID}`,
-        fields: {
-          items(existingItems = []) {
-            const ref = cache.writeFragment({
-              data: addStep,
-              fragment: gql`
-                              fragment NewStep on StepDTO {
-                                  id
-                                  name
-                                  description
-                                  groupID
-                                  sortNr
-                              }
-                          `
-            })
-            return [...existingItems, ref]
-          }
-        }
-      })
+      CacheHelper.addItem(cache, addStep, GroupItemTypes.StepBE)
     }
   })
   const [updateStep] = useMutation(UPDATE_STEP, {
     update(cache, { data: { updateStep } }) {
-      cache.modify({
-        id: `GroupDTO:${updateStep.groupID}`,
-        fields: {
-          items(existingItems = []) {
-            const ref = cache.writeFragment({
-              data: updateStep,
-              fragment: gql`
-                              fragment NewStep on StepDTO {
-                                  id
-                                  name
-                                  description
-                                  groupID
-                                  sortNr
-                              }
-                          `
-            })
-            return [...existingItems.filter((i: {__ref: string}) => {
-              return `StepDTO:${updateStep.id}` !== i.__ref
-            }), ref]
-          }
-        }
-      })
+      CacheHelper.updateItem(cache, updateStep, GroupItemTypes.StepBE)
     }
   })
   const [removeStep] = useMutation(REMOVE_STEP, {
     update(cache, { data: { removeStep } }) {
-      cache.modify({
-        id: `GroupDTO:${removeStep.groupID}`,
-        fields: {
-          items(existingItems = []) {
-            if (removeStep.success) {
-              return existingItems.filter((i: {__ref: string}) => `StepDTO:${removeStep.id}` !== i.__ref)
-            }
-            return existingItems
-          }
-        }
-      })
+      CacheHelper.removeItem(cache, removeStep, GroupItemTypes.StepBE)
     }
   })
 
@@ -113,38 +72,42 @@ export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] })
       groupID: data.groupID
     }
     return addStep({
-      variables: { addStepInput }
-      // TODO: Fix optimistic response
-      /* optimisticResponse: {
+      variables: { addStepInput },
+      optimisticResponse: {
         addStep: {
           id: 'temp-id',
           name: addStepInput.name,
           description: addStepInput.description,
+          picture: addStepInput.picture ?? '',
+          sortNr: props.stepGroups.filter((g) => g.id === data.groupID)[0].items.length,
           groupID: addStepInput.groupID,
-          sortNr: 1,
-          __typename: 'StepDTO'
-        }
-      } */
-    })
-  }
-
-  function onUpdateStepSubmit(updateStepInput: UpdateStepInput) {
-    return updateStep({
-      variables: { updateStepInput },
-      optimisticResponse: {
-        updateStep: {
-          id: updateStepInput.id,
-          name: updateStepInput.name,
-          description: updateStepInput.description,
-          groupID: updateStepInput.groupID,
-          sortNr: updateStepInput.sortNr,
           __typename: 'StepDTO'
         }
       }
     })
   }
 
-  function onDeleteStepSubmit(stepId: string, groupId: string) {
+  function onUpdateStepSubmit(updateStepInput: UpdateStepInput, prevGroupId: string, prevSortNr?: number) {
+    return updateStep({
+      variables: { updateStepInput },
+      optimisticResponse: {
+        updateStep: {
+          item: {
+            id: updateStepInput.id,
+            name: updateStepInput.name,
+            description: updateStepInput.description,
+            groupID: updateStepInput.groupID,
+            sortNr: updateStepInput.sortNr
+          },
+          prevGroupId,
+          prevSortNr,
+          __typename: 'GroupItemUpdateResponse'
+        }
+      }
+    })
+  }
+
+  function onDeleteStepSubmit(stepId: string, groupId: string, sortNr: number) {
     return removeStep({
       variables: { stepId },
       optimisticResponse: {
@@ -152,6 +115,7 @@ export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] })
           id: stepId,
           groupID: groupId,
           success: true,
+          sortNr,
           __typename: 'GroupItemDeletionResponse'
         }
       }

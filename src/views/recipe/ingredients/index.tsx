@@ -21,12 +21,16 @@ const ADD_INGREDIENT = gql`
 const UPDATE_INGREDIENT = gql`
     mutation UpdateIngredient($updateIngredientInput: UpdateIngredientInput!) {
         updateIngredient(updateIngredientInput: $updateIngredientInput) {
-            id
-            name
-            amount
-            unit
-            groupID
-            sortNr
+            item {
+                ...on IngredientDTO {
+                    id
+                    name
+                    amount
+                    unit
+                    groupID
+                    sortNr
+                }
+            }
             prevGroupID
             prevSortNr
         }
@@ -39,6 +43,7 @@ const REMOVE_INGREDIENT = gql`
             id
             groupID
             success
+            sortNr
         }
     }
 `
@@ -46,39 +51,19 @@ const REMOVE_INGREDIENT = gql`
 export function RecipeIngredients(props: { recipeId: string, ingredientGroups: GroupDTO[] }) {
   const [addIngredient] = useMutation(ADD_INGREDIENT, {
     update(cache, { data: { addIngredient } }) {
-      cache.modify({
-        id: `GroupDTO:${addIngredient.groupID}`,
-        fields: {
-          items(existingItems = []) {
-            const ref = cache.writeFragment({
-              data: addIngredient,
-              fragment: gql`
-                                fragment NewIngredient on IngredientDTO {
-                                    id
-                                    name
-                                    amount
-                                    unit
-                                    groupID
-                                    sortNr
-                                }
-                            `
-            })
-            return [...existingItems, ref]
-          }
-        }
-      })
+      CacheHelper.addItem(cache, addIngredient, GroupItemTypes.IngredientBE)
     }
   })
 
   const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
     update(cache, { data: { updateIngredient } }) {
-      CacheHelper.updateIngredient(cache, updateIngredient)
+      CacheHelper.updateItem(cache, updateIngredient, GroupItemTypes.IngredientBE)
     }
   })
 
   const [removeIngredient] = useMutation(REMOVE_INGREDIENT, {
     update(cache, { data: { removeIngredient } }) {
-      CacheHelper.removeIngredient(cache, removeIngredient)
+      CacheHelper.removeItem(cache, removeIngredient, GroupItemTypes.IngredientBE)
     }
   })
 
@@ -98,7 +83,7 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
           name: addIngredientInput.name,
           amount: addIngredientInput.amount,
           unit: addIngredientInput.unit,
-          sortNr: 1,
+          sortNr: props.ingredientGroups.filter((g) => g.id === data.groupID)[0].items.length,
           groupID: addIngredientInput.groupID,
           __typename: 'IngredientDTO'
         }
@@ -111,21 +96,23 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
       variables: { updateIngredientInput },
       optimisticResponse: {
         updateIngredient: {
-          id: updateIngredientInput.id,
-          name: updateIngredientInput.name,
-          amount: updateIngredientInput.amount,
-          unit: updateIngredientInput.unit,
-          groupID: updateIngredientInput.groupID,
-          sortNr: updateIngredientInput.sortNr,
+          item: {
+            id: updateIngredientInput.id,
+            name: updateIngredientInput.name,
+            amount: updateIngredientInput.amount,
+            unit: updateIngredientInput.unit,
+            groupID: updateIngredientInput.groupID,
+            sortNr: updateIngredientInput.sortNr
+          },
           prevGroupID: prevGroupId,
           prevSortNr,
-          __typename: 'IngredientDTO'
+          __typename: 'GroupItemUpdateResponse'
         }
       }
     })
   }
 
-  function onDeleteIngredientSubmit(ingredientId: string, groupId: string) {
+  function onDeleteIngredientSubmit(ingredientId: string, groupId: string, sortNr: number) {
     return removeIngredient({
       variables: { ingredientId },
       optimisticResponse: {
@@ -133,6 +120,7 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
           id: ingredientId,
           groupID: groupId,
           success: true,
+          sortNr,
           __typename: 'GroupItemDeletionResponse'
         }
       }

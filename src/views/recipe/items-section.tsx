@@ -12,7 +12,7 @@ type RecipeGroupProps = {
   itemType: GroupItemTypes,
   add: (input: any) => Promise<any>,
   update: (input: any, prevGroupId: string, prevSortNr?: number) => Promise<any>,
-  delete: (id: string, groupId: string) => Promise<any>,
+  delete: (id: string, groupId: string, sortNr: number) => Promise<any>,
 }
 
 export function RecipeItemsSection(props: RecipeGroupProps) {

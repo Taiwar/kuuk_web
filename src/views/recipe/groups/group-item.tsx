@@ -1,5 +1,4 @@
-import React, { ReactChild, useCallback, useState } from 'react'
-import update from 'immutability-helper'
+import React, { ReactChild, useState } from 'react'
 import { GroupDTO, IngredientDTO, NoteDTO, StepDTO } from '../../../shared/graphql'
 import { DEFAULT_GROUP_NAME, GroupItemTypes } from '../../../shared/constants'
 import { IngredientItem } from '../ingredients/ingredient-item'
@@ -26,7 +25,7 @@ export type ItemGroupProps = {
   group: GroupDTO,
   add: (input: any) => Promise<any>,
   update: (input: any, prevGroupId: string) => Promise<any>,
-  delete: (id: string, groupId: string) => Promise<any>,
+  delete: (id: string, groupId: string, sortNr: number) => Promise<any>,
   editable: boolean
 }
 
@@ -77,8 +76,8 @@ export function GroupItem(props: ItemGroupProps) {
     })
   }
 
-  function handleItemDelete(id: string) {
-    return props.delete(id, props.group.id)
+  function handleItemDelete(id: string, sortNr: number) {
+    return props.delete(id, props.group.id, sortNr)
   }
 
   function handleGroupDelete() {
@@ -139,7 +138,7 @@ export function GroupItem(props: ItemGroupProps) {
                           ingredient={item as IngredientDTO}
                           editable={itemEditable}
                           updateIngredient={(input) => props.update(input, props.group.id)}
-                          deleteIngredient={handleItemDelete}
+                          deleteIngredient={(id) => handleItemDelete(id, item.sortNr)}
                       />
                     break
                   case GroupItemTypes.StepBE:
@@ -147,7 +146,7 @@ export function GroupItem(props: ItemGroupProps) {
                           step={item as StepDTO}
                           editable={itemEditable}
                           updateStep={(input) => props.update(input, props.group.id)}
-                          deleteStep={handleItemDelete}
+                          deleteStep={(id) => handleItemDelete(id, item.sortNr)}
                       />
                     break
                   case GroupItemTypes.NoteBE:
@@ -155,7 +154,7 @@ export function GroupItem(props: ItemGroupProps) {
                           note={item as NoteDTO}
                           editable={itemEditable}
                           updateNote={(input) => props.update(input, props.group.id)}
-                          deleteNote={handleItemDelete}
+                          deleteNote={(id) => handleItemDelete(id, item.sortNr)}
                       />
                     break
                   default:
