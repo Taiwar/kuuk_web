@@ -10,11 +10,11 @@ export class ReorderingHelper {
     if (prevSortNr) {
       if (isMovingPosition || isMovingGroups) {
         if (!isMovingGroups && newSortNr > prevSortNr) {
-          if (itemSortNr <= newSortNr && itemSortNr > prevSortNr) {
+          if (itemSortNr <= newSortNr && (isMovingGroups || itemSortNr > prevSortNr)) {
             return itemSortNr - 1
           }
         } else {
-          if (itemSortNr >= newSortNr && itemSortNr < prevSortNr) {
+          if (itemSortNr >= newSortNr && (isMovingGroups || itemSortNr < prevSortNr)) {
             return itemSortNr + 1
           }
         }

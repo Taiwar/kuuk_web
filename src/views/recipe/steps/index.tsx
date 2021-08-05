@@ -4,6 +4,7 @@ import { AddStepInput, GroupDTO, UpdateStepInput } from '../../../shared/graphql
 import { GroupItemTypes } from '../../../shared/constants'
 import { RecipeItemsSection } from '../items-section'
 import CacheHelper from '../../../shared/cache-helper'
+import { LoadingSpinner } from '../../../components/loading-spinner'
 
 const ADD_STEP = gql`
     mutation AddStep($addStepInput: AddStepInput!) {
@@ -48,21 +49,27 @@ const REMOVE_STEP = gql`
 `
 
 export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] }) {
-  const [addStep] = useMutation(ADD_STEP, {
+  const [addStep, addResult] = useMutation(ADD_STEP, {
     update(cache, { data: { addStep } }) {
       CacheHelper.addItem(cache, addStep, GroupItemTypes.StepBE)
     }
   })
-  const [updateStep] = useMutation(UPDATE_STEP, {
+  const [updateStep, updateResult] = useMutation(UPDATE_STEP, {
     update(cache, { data: { updateStep } }) {
       CacheHelper.updateItem(cache, updateStep, GroupItemTypes.StepBE)
     }
   })
-  const [removeStep] = useMutation(REMOVE_STEP, {
+  const [removeStep, removeResult] = useMutation(REMOVE_STEP, {
     update(cache, { data: { removeStep } }) {
       CacheHelper.removeItem(cache, removeStep, GroupItemTypes.StepBE)
     }
   })
+
+  if (addResult.loading || updateResult.loading || removeResult.loading) return <LoadingSpinner />
+  if (addResult.error || updateResult.error || removeResult.error) {
+    const error = addResult.error ?? updateResult.error ?? removeResult.error ?? ''
+    return <p>Error {error.toString()}</p>
+  }
 
   function onAddStepSubmit(data: AddStepInput) {
     const addStepInput: AddStepInput = {

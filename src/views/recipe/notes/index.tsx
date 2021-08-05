@@ -4,6 +4,7 @@ import { AddNoteInput, UpdateNoteInput, GroupDTO } from '../../../shared/graphql
 import { GroupItemTypes } from '../../../shared/constants'
 import { RecipeItemsSection } from '../items-section'
 import CacheHelper from '../../../shared/cache-helper'
+import { LoadingSpinner } from '../../../components/loading-spinner'
 
 const ADD_NOTE = gql`
     mutation AddNote($addNoteInput: AddNoteInput!) {
@@ -48,21 +49,27 @@ const REMOVE_NOTE = gql`
 `
 
 export function RecipeNotes(props: { recipeId: string, noteGroups: GroupDTO[] }) {
-  const [addNote] = useMutation(ADD_NOTE, {
+  const [addNote, addResult] = useMutation(ADD_NOTE, {
     update(cache, { data: { addNote } }) {
       CacheHelper.addItem(cache, addNote, GroupItemTypes.NoteBE)
     }
   })
-  const [updateNote] = useMutation(UPDATE_NOTE, {
+  const [updateNote, updateResult] = useMutation(UPDATE_NOTE, {
     update(cache, { data: { updateNote } }) {
       CacheHelper.updateItem(cache, updateNote, GroupItemTypes.NoteBE)
     }
   })
-  const [removeNote] = useMutation(REMOVE_NOTE, {
+  const [removeNote, removeResult] = useMutation(REMOVE_NOTE, {
     update(cache, { data: { removeNote } }) {
       CacheHelper.removeItem(cache, removeNote, GroupItemTypes.NoteBE)
     }
   })
+
+  if (addResult.loading || updateResult.loading || removeResult.loading) return <LoadingSpinner />
+  if (addResult.error || updateResult.error || removeResult.error) {
+    const error = addResult.error ?? updateResult.error ?? removeResult.error ?? ''
+    return <p>Error {error.toString()}</p>
+  }
 
   function onAddNoteSubmit(data: AddNoteInput) {
     const addNoteInput: AddNoteInput = {

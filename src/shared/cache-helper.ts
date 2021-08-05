@@ -92,7 +92,6 @@ export default class CacheHelper {
   }
 
   static addItem(cache: ApolloCache<any>, itemDTO: IngredientDTO | StepDTO | NoteDTO, itemType: GroupItemTypes) {
-    console.log('add item', itemDTO, itemType)
     cache.modify({
       id: this.buildGroupCacheId(itemDTO.groupID),
       fields: {
@@ -146,7 +145,12 @@ export default class CacheHelper {
               id: item.__ref,
               fields: {
                 sortNr(itemSortNr: number) {
-                  return ReorderingHelper.sortNrAfterReorder(itemSortNr, newSortNr, isMovingPosition, isMovingGroups, updateItemResponse.prevSortNr)
+                  const resultNr = ReorderingHelper.sortNrAfterReorder(itemSortNr, newSortNr, isMovingPosition, isMovingGroups, updateItemResponse.prevSortNr)
+                  if (resultNr < 1) {
+                    console.error('ResultNr < 1!', resultNr)
+                    console.error(itemSortNr, newSortNr, isMovingPosition, isMovingGroups, updateItemResponse.prevSortNr)
+                  }
+                  return resultNr
                 }
               }
             })

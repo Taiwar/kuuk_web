@@ -4,6 +4,7 @@ import { AddIngredientInput, GroupDTO, UpdateIngredientInput } from '../../../sh
 import { RecipeItemsSection } from '../items-section'
 import { GroupItemTypes } from '../../../shared/constants'
 import CacheHelper from '../../../shared/cache-helper'
+import { LoadingSpinner } from '../../../components/loading-spinner'
 
 const ADD_INGREDIENT = gql`
     mutation AddIngredient($addIngredientInput: AddIngredientInput!) {
@@ -49,23 +50,29 @@ const REMOVE_INGREDIENT = gql`
 `
 
 export function RecipeIngredients(props: { recipeId: string, ingredientGroups: GroupDTO[] }) {
-  const [addIngredient] = useMutation(ADD_INGREDIENT, {
+  const [addIngredient, addResult] = useMutation(ADD_INGREDIENT, {
     update(cache, { data: { addIngredient } }) {
       CacheHelper.addItem(cache, addIngredient, GroupItemTypes.IngredientBE)
     }
   })
 
-  const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
+  const [updateIngredient, updateResult] = useMutation(UPDATE_INGREDIENT, {
     update(cache, { data: { updateIngredient } }) {
       CacheHelper.updateItem(cache, updateIngredient, GroupItemTypes.IngredientBE)
     }
   })
 
-  const [removeIngredient] = useMutation(REMOVE_INGREDIENT, {
+  const [removeIngredient, removeResult] = useMutation(REMOVE_INGREDIENT, {
     update(cache, { data: { removeIngredient } }) {
       CacheHelper.removeItem(cache, removeIngredient, GroupItemTypes.IngredientBE)
     }
   })
+
+  if (addResult.loading || updateResult.loading || removeResult.loading) return <LoadingSpinner/>
+  if (addResult.error || updateResult.error || removeResult.error) {
+    const error = addResult.error ?? updateResult.error ?? removeResult.error ?? ''
+    return <p>Error {error.toString()}</p>
+  }
 
   function onAddIngredientSubmit(data: AddIngredientInput & { amount: string }) {
     const addIngredientInput: AddIngredientInput = {

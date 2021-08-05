@@ -48,7 +48,6 @@ export function IngredientItem(props: IngredientItemProps) {
   }
 
   return <div className="flex">
-    <p>{ingredient.sortNr}</p>
     <button hidden={!editable} className="rounded-full p-1 shadow bg-pink-400 text-white ml-1" onClick={handleOnDelete}>
       <Trash size={16}/>
     </button>

@@ -26,6 +26,7 @@ export function RecipeItemsSection(props: RecipeGroupProps) {
     if (hasNoTarget || (isSameGroup && isSameIndex)) {
       return
     }
+    console.log('moving', result.source.index, 'to', newSortNr)
     return props.update({
       id: result.draggableId,
       sortNr: newSortNr === 0 ? 1 : newSortNr,
