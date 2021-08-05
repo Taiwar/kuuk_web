@@ -76,11 +76,11 @@ export default class CacheHelper {
                   if (updateIngredient.prevSortNr) {
                     if (isMovingPosition || isMovingGroups) {
                       if (!isMovingGroups && newSortNr > updateIngredient.prevSortNr) {
-                        if (itemSortNr <= newSortNr) {
+                        if (itemSortNr <= newSortNr && itemSortNr > updateIngredient.prevSortNr) {
                           return itemSortNr - 1
                         }
                       } else {
-                        if (itemSortNr >= newSortNr) {
+                        if (itemSortNr >= newSortNr && itemSortNr < updateIngredient.prevSortNr) {
                           return itemSortNr + 1
                         }
                       }
