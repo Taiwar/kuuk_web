@@ -65,7 +65,7 @@ export function RecipeNotes(props: { recipeId: string, noteGroups: GroupDTO[] })
     }
   })
 
-  if (addResult.loading || updateResult.loading || removeResult.loading) return <LoadingSpinner />
+  // if (addResult.loading || updateResult.loading || removeResult.loading) return <LoadingSpinner />
   if (addResult.error || updateResult.error || removeResult.error) {
     const error = addResult.error ?? updateResult.error ?? removeResult.error ?? ''
     return <p>Error {error.toString()}</p>

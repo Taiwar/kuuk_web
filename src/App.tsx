@@ -10,6 +10,7 @@ import { CreateRecipe } from './views/createRecipe'
 import { Home } from './views/home'
 import { RecipePage } from './views/recipe'
 import { Search } from './views/search'
+import { ImportRecipe } from './views/importRecipe'
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
             </Route>
             <Route path="/createRecipe">
               <CreateRecipe />
+            </Route>
+            <Route path="/importRecipe">
+              <ImportRecipe />
             </Route>
             <Route path="/search">
               <Search />

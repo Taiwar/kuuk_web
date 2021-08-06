@@ -1,5 +1,5 @@
 import React from 'react'
-import { Plus, Search } from 'react-bootstrap-icons'
+import { Download, Plus, Search } from 'react-bootstrap-icons'
 import {
   Link
 } from 'react-router-dom'
@@ -20,6 +20,7 @@ export function Header() {
 
     <ul className="w-full">
       <KuukNavLink to="/createRecipe" icon={<Plus size={28} />} />
+      <KuukNavLink to="/importRecipe" icon={<Download size={20} />} />
       <KuukNavLink to="/search" icon={<Search size={16} />} />
     </ul>
   </aside>
