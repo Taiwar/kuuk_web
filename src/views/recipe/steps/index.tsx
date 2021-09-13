@@ -1,74 +1,83 @@
-import { gql, useMutation } from '@apollo/client'
-import React from 'react'
-import { AddStepInput, GroupDTO, UpdateStepInput } from '../../../shared/graphql'
-import { GroupItemTypes } from '../../../shared/constants'
-import { RecipeItemsSection } from '../items-section'
-import CacheHelper from '../../../shared/cache-helper'
-import { LoadingSpinner } from '../../../components/loading-spinner'
+import { gql, useMutation } from '@apollo/client';
+import React from 'react';
+import {
+  AddStepInput,
+  GroupDTO,
+  UpdateStepInput,
+} from '../../../shared/graphql';
+import { GroupItemTypes } from '../../../shared/constants';
+import { RecipeItemsSection } from '../items-section';
+import CacheHelper from '../../../shared/cache-helper';
 
 const ADD_STEP = gql`
-    mutation AddStep($addStepInput: AddStepInput!) {
-        addStep(addStepInput: $addStepInput) {
-            id
-            name
-            description
-            picture
-            groupID
-            sortNr
-        }
+  mutation AddStep($addStepInput: AddStepInput!) {
+    addStep(addStepInput: $addStepInput) {
+      id
+      name
+      description
+      picture
+      groupID
+      sortNr
     }
-`
+  }
+`;
 
 const UPDATE_STEP = gql`
-    mutation UpdateStep($updateStepInput: UpdateStepInput!) {
-        updateStep(updateStepInput: $updateStepInput) {
-            item {
-                ... on StepDTO {
-                    id
-                    name
-                    description
-                    groupID
-                    sortNr
-                }
-            }
-            prevSortNr
-            prevGroupID
+  mutation UpdateStep($updateStepInput: UpdateStepInput!) {
+    updateStep(updateStepInput: $updateStepInput) {
+      item {
+        ... on StepDTO {
+          id
+          name
+          description
+          groupID
+          sortNr
         }
+      }
+      prevSortNr
+      prevGroupID
     }
-`
+  }
+`;
 
 const REMOVE_STEP = gql`
-    mutation RemoveStep($stepId: String!) {
-        removeStep(stepID: $stepId) {
-            id
-            groupID
-            success
-            sortNr
-        }
+  mutation RemoveStep($stepId: String!) {
+    removeStep(stepID: $stepId) {
+      id
+      groupID
+      success
+      sortNr
     }
-`
+  }
+`;
 
-export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] }) {
+type RecipeStepsProps = {
+  recipeId: string;
+  stepGroups: GroupDTO[];
+};
+
+export function RecipeSteps(props: RecipeStepsProps): JSX.Element {
   const [addStep, addResult] = useMutation(ADD_STEP, {
     update(cache, { data: { addStep } }) {
-      CacheHelper.addItem(cache, addStep, GroupItemTypes.StepBE)
-    }
-  })
+      CacheHelper.addItem(cache, addStep, GroupItemTypes.StepBE);
+    },
+  });
   const [updateStep, updateResult] = useMutation(UPDATE_STEP, {
     update(cache, { data: { updateStep } }) {
-      CacheHelper.updateItem(cache, updateStep, GroupItemTypes.StepBE)
-    }
-  })
+      CacheHelper.updateItem(cache, updateStep, GroupItemTypes.StepBE);
+    },
+  });
   const [removeStep, removeResult] = useMutation(REMOVE_STEP, {
     update(cache, { data: { removeStep } }) {
-      CacheHelper.removeItem(cache, removeStep, GroupItemTypes.StepBE)
-    }
-  })
+      CacheHelper.removeItem(cache, removeStep, GroupItemTypes.StepBE);
+    },
+  });
 
   // if (addResult.loading || updateResult.loading || removeResult.loading) return <LoadingSpinner />
   if (addResult.error || updateResult.error || removeResult.error) {
-    const error = addResult.error ?? updateResult.error ?? removeResult.error ?? ''
-    return <p>Error {error.toString()}</p>
+    const error =
+      addResult.error ?? updateResult.error ?? removeResult.error ?? '';
+    return <p>Error {error.toString()}</p>;
   }
 
   function onAddStepSubmit(data: AddStepInput) {
@@ -76,8 +85,8 @@ export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] })
       recipeID: props.recipeId,
       name: data.name,
       description: data.description,
-      groupID: data.groupID
-    }
+      groupID: data.groupID,
+    };
     return addStep({
       variables: { addStepInput },
       optimisticResponse: {
@@ -86,15 +95,20 @@ export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] })
           name: addStepInput.name,
           description: addStepInput.description,
           picture: addStepInput.picture ?? '',
-          sortNr: props.stepGroups.filter((g) => g.id === data.groupID)[0].items.length,
+          sortNr: props.stepGroups.filter((g) => g.id === data.groupID)[0].items
+            .length,
           groupID: addStepInput.groupID,
-          __typename: 'StepDTO'
-        }
-      }
-    })
+          __typename: 'StepDTO',
+        },
+      },
+    });
   }
 
-  function onUpdateStepSubmit(updateStepInput: UpdateStepInput, prevGroupId: string, prevSortNr?: number) {
+  function onUpdateStepSubmit(
+    updateStepInput: UpdateStepInput,
+    prevGroupId: string,
+    prevSortNr?: number,
+  ) {
     return updateStep({
       variables: { updateStepInput },
       optimisticResponse: {
@@ -104,14 +118,14 @@ export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] })
             name: updateStepInput.name,
             description: updateStepInput.description,
             groupID: updateStepInput.groupID,
-            sortNr: updateStepInput.sortNr
+            sortNr: updateStepInput.sortNr,
           },
           prevGroupId,
           prevSortNr,
-          __typename: 'GroupItemUpdateResponse'
-        }
-      }
-    })
+          __typename: 'GroupItemUpdateResponse',
+        },
+      },
+    });
   }
 
   function onDeleteStepSubmit(stepId: string, groupId: string, sortNr: number) {
@@ -123,13 +137,14 @@ export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] })
           groupID: groupId,
           success: true,
           sortNr,
-          __typename: 'GroupItemDeletionResponse'
-        }
-      }
-    })
+          __typename: 'GroupItemDeletionResponse',
+        },
+      },
+    });
   }
 
-  return <RecipeItemsSection
+  return (
+    <RecipeItemsSection
       recipeId={props.recipeId}
       title={'Steps'}
       groups={props.stepGroups}
@@ -137,5 +152,6 @@ export function RecipeSteps(props: { recipeId: string, stepGroups: GroupDTO[] })
       add={onAddStepSubmit}
       update={onUpdateStepSubmit}
       delete={onDeleteStepSubmit}
-  />
+    />
+  );
 }

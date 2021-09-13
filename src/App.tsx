@@ -1,18 +1,14 @@
-import React from 'react'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from 'react-router-dom'
-import './App.css'
-import { Header } from './components/header'
-import { CreateRecipe } from './views/createRecipe'
-import { Home } from './views/home'
-import { RecipePage } from './views/recipe'
-import { Search } from './views/search'
-import { ImportRecipe } from './views/importRecipe'
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import './App.css';
+import { Header } from './components/header';
+import { CreateRecipe } from './views/createRecipe';
+import { Home } from './views/home';
+import { RecipePage } from './views/recipe';
+import { Search } from './views/search';
+import { ImportRecipe } from './views/importRecipe';
 
-function App() {
+function App(): JSX.Element {
   return (
     <Router>
       <div className="h-full w-screen min-h-screen flex bg-gray-100">
@@ -38,7 +34,7 @@ function App() {
         </main>
       </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

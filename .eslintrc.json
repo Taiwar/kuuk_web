@@ -5,7 +5,9 @@
     },
     "extends": [
         "plugin:react/recommended",
-        "standard"
+        "plugin:prettier/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -23,6 +25,6 @@
         "space-before-function-paren": "off",
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
-        "no-unused-vars": "warn"
+        "no-unused-vars": "off"
     }
 }

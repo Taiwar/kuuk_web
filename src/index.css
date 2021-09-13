@@ -1,10 +1,13 @@
 @tailwind base;
 
 @layer base {
-    a, a:hover, a:focus, a:active {
-        text-decoration: none !important;
-        color: inherit !important;
-    }
+  a,
+  a:hover,
+  a:focus,
+  a:active {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
 }
 
 @tailwind components;

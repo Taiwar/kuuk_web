@@ -1,87 +1,106 @@
-import React from 'react'
-import { gql, useMutation } from '@apollo/client'
-import { AddIngredientInput, GroupDTO, UpdateIngredientInput } from '../../../shared/graphql'
-import { RecipeItemsSection } from '../items-section'
-import { GroupItemTypes } from '../../../shared/constants'
-import CacheHelper from '../../../shared/cache-helper'
-import { LoadingSpinner } from '../../../components/loading-spinner'
+import React from 'react';
+import { gql, useMutation } from '@apollo/client';
+import {
+  AddIngredientInput,
+  GroupDTO,
+  UpdateIngredientInput,
+} from '../../../shared/graphql';
+import { RecipeItemsSection } from '../items-section';
+import { GroupItemTypes } from '../../../shared/constants';
+import CacheHelper from '../../../shared/cache-helper';
 
 const ADD_INGREDIENT = gql`
-    mutation AddIngredient($addIngredientInput: AddIngredientInput!) {
-        addIngredient(addIngredientInput: $addIngredientInput) {
-            id
-            name
-            amount
-            unit
-            groupID
-            sortNr
-        }
+  mutation AddIngredient($addIngredientInput: AddIngredientInput!) {
+    addIngredient(addIngredientInput: $addIngredientInput) {
+      id
+      name
+      amount
+      unit
+      groupID
+      sortNr
     }
-`
+  }
+`;
 
 const UPDATE_INGREDIENT = gql`
-    mutation UpdateIngredient($updateIngredientInput: UpdateIngredientInput!) {
-        updateIngredient(updateIngredientInput: $updateIngredientInput) {
-            item {
-                ...on IngredientDTO {
-                    id
-                    name
-                    amount
-                    unit
-                    groupID
-                    sortNr
-                }
-            }
-            prevGroupID
-            prevSortNr
+  mutation UpdateIngredient($updateIngredientInput: UpdateIngredientInput!) {
+    updateIngredient(updateIngredientInput: $updateIngredientInput) {
+      item {
+        ... on IngredientDTO {
+          id
+          name
+          amount
+          unit
+          groupID
+          sortNr
         }
+      }
+      prevGroupID
+      prevSortNr
     }
-`
+  }
+`;
 
 const REMOVE_INGREDIENT = gql`
-    mutation RemoveIngredient($ingredientId: String!) {
-        removeIngredient(ingredientID: $ingredientId) {
-            id
-            groupID
-            success
-            sortNr
-        }
+  mutation RemoveIngredient($ingredientId: String!) {
+    removeIngredient(ingredientID: $ingredientId) {
+      id
+      groupID
+      success
+      sortNr
     }
-`
+  }
+`;
 
-export function RecipeIngredients(props: { recipeId: string, ingredientGroups: GroupDTO[] }) {
+type RecipeIngredientsProps = {
+  recipeId: string;
+  ingredientGroups: GroupDTO[];
+};
+
+export function RecipeIngredients(props: RecipeIngredientsProps): JSX.Element {
   const [addIngredient, addResult] = useMutation(ADD_INGREDIENT, {
     update(cache, { data: { addIngredient } }) {
-      CacheHelper.addItem(cache, addIngredient, GroupItemTypes.IngredientBE)
-    }
-  })
+      CacheHelper.addItem(cache, addIngredient, GroupItemTypes.IngredientBE);
+    },
+  });
 
   const [updateIngredient, updateResult] = useMutation(UPDATE_INGREDIENT, {
     update(cache, { data: { updateIngredient } }) {
-      CacheHelper.updateItem(cache, updateIngredient, GroupItemTypes.IngredientBE)
-    }
-  })
+      CacheHelper.updateItem(
+        cache,
+        updateIngredient,
+        GroupItemTypes.IngredientBE,
+      );
+    },
+  });
 
   const [removeIngredient, removeResult] = useMutation(REMOVE_INGREDIENT, {
     update(cache, { data: { removeIngredient } }) {
-      CacheHelper.removeItem(cache, removeIngredient, GroupItemTypes.IngredientBE)
-    }
-  })
+      CacheHelper.removeItem(
+        cache,
+        removeIngredient,
+        GroupItemTypes.IngredientBE,
+      );
+    },
+  });
 
   // if (addResult.loading || updateResult.loading || removeResult.loading) return <LoadingSpinner/>
   if (addResult.error || updateResult.error || removeResult.error) {
-    const error = addResult.error ?? updateResult.error ?? removeResult.error ?? ''
-    return <p>Error {error.toString()}</p>
+    const error =
+      addResult.error ?? updateResult.error ?? removeResult.error ?? '';
+    return <p>Error {error.toString()}</p>;
   }
 
-  function onAddIngredientSubmit(data: AddIngredientInput & { amount: string }) {
+  function onAddIngredientSubmit(
+    input: AddIngredientInput & { amount: string } & any,
+  ) {
     const addIngredientInput: AddIngredientInput = {
       recipeID: props.recipeId,
-      name: data.name,
-      amount: parseFloat(data.amount),
-      unit: data.unit,
-      groupID: data.groupID
-    }
+      name: input.name,
+      amount: parseFloat(input.amount),
+      unit: input.unit,
+      groupID: input.groupID,
+    };
     return addIngredient({
       variables: { addIngredientInput },
       optimisticResponse: {
@@ -90,15 +109,21 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
           name: addIngredientInput.name,
           amount: addIngredientInput.amount,
           unit: addIngredientInput.unit,
-          sortNr: props.ingredientGroups.filter((g) => g.id === data.groupID)[0].items.length,
+          sortNr: props.ingredientGroups.filter(
+            (g) => g.id === input.groupID,
+          )[0].items.length,
           groupID: addIngredientInput.groupID,
-          __typename: 'IngredientDTO'
-        }
-      }
-    })
+          __typename: 'IngredientDTO',
+        },
+      },
+    });
   }
 
-  function onUpdateIngredientSubmit(updateIngredientInput: UpdateIngredientInput, prevGroupId: string, prevSortNr?: number) {
+  function onUpdateIngredientSubmit(
+    updateIngredientInput: UpdateIngredientInput,
+    prevGroupId: string,
+    prevSortNr?: number,
+  ) {
     return updateIngredient({
       variables: { updateIngredientInput },
       optimisticResponse: {
@@ -109,17 +134,21 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
             amount: updateIngredientInput.amount,
             unit: updateIngredientInput.unit,
             groupID: updateIngredientInput.groupID,
-            sortNr: updateIngredientInput.sortNr
+            sortNr: updateIngredientInput.sortNr,
           },
           prevGroupID: prevGroupId,
           prevSortNr,
-          __typename: 'GroupItemUpdateResponse'
-        }
-      }
-    })
+          __typename: 'GroupItemUpdateResponse',
+        },
+      },
+    });
   }
 
-  function onDeleteIngredientSubmit(ingredientId: string, groupId: string, sortNr: number) {
+  function onDeleteIngredientSubmit(
+    ingredientId: string,
+    groupId: string,
+    sortNr: number,
+  ) {
     return removeIngredient({
       variables: { ingredientId },
       optimisticResponse: {
@@ -128,13 +157,14 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
           groupID: groupId,
           success: true,
           sortNr,
-          __typename: 'GroupItemDeletionResponse'
-        }
-      }
-    })
+          __typename: 'GroupItemDeletionResponse',
+        },
+      },
+    });
   }
 
-  return <RecipeItemsSection
+  return (
+    <RecipeItemsSection
       recipeId={props.recipeId}
       title={'Ingredients'}
       groups={props.ingredientGroups}
@@ -142,5 +172,6 @@ export function RecipeIngredients(props: { recipeId: string, ingredientGroups: G
       add={onAddIngredientSubmit}
       update={onUpdateIngredientSubmit}
       delete={onDeleteIngredientSubmit}
-  />
+    />
+  );
 }

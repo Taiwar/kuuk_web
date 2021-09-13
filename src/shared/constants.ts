@@ -1,4 +1,4 @@
-export const SERVER_URL = 'http://localhost:3000/graphql'
+export const SERVER_URL = 'http://localhost:3000/graphql';
 
 export enum GroupItemTypes {
   // eslint-disable-next-line no-unused-vars
@@ -9,4 +9,4 @@ export enum GroupItemTypes {
   NoteBE = 'NoteBE',
 }
 
-export const DEFAULT_GROUP_NAME = '&%$default$%&'
+export const DEFAULT_GROUP_NAME = '&%$default$%&';

@@ -1,8 +1,5 @@
-import {
-  ApolloClient,
-  InMemoryCache
-} from '@apollo/client'
-import { SERVER_URL } from '../shared/constants'
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { SERVER_URL } from '../shared/constants';
 
 export const client = new ApolloClient({
   uri: SERVER_URL,
@@ -13,17 +10,17 @@ export const client = new ApolloClient({
           ingredients: {
             merge(existing, incoming) {
               // Equivalent to what happens if there is no custom merge function.
-              return incoming
-            }
+              return incoming;
+            },
           },
           steps: {
             merge(existing, incoming) {
               // Equivalent to what happens if there is no custom merge function.
-              return incoming
-            }
-          }
-        }
-      }
-    }
-  })
-})
+              return incoming;
+            },
+          },
+        },
+      },
+    },
+  }),
+});
