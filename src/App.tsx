@@ -11,7 +11,7 @@ import { ImportRecipe } from './views/importRecipe';
 function App(): JSX.Element {
   return (
     <Router>
-      <div className="h-full w-screen min-h-screen flex bg-gray-100">
+      <div className="h-full min-h-screen flex bg-gray-100">
         <Header />
         <main className="w-full">
           <Switch>

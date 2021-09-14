@@ -106,7 +106,7 @@ export function RecipePage(): JSX.Element {
   return (
     <div>
       <TopBar />
-      <div className="container ml-4">
+      <div className="mx-4">
         <div className="shadow rounded">
           <div className="bg-pink-300 p-4 rounded-t-lg">
             <h2 className="mb-0 text-white font-bold text-3xl">
