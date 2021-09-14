@@ -1,6 +1,6 @@
 import { FetchResult } from '@apollo/client';
 import React, { useState } from 'react';
-import { RecipeSectionHeader } from '../../components/recipe-section-header';
+import { RecipeSectionHeader } from '../../components/recipes/recipe-section-header';
 import { GroupItemTypes } from '../../shared/constants';
 import { AddInputType, UpdateInputType } from '../../shared/types';
 import { GroupItem } from './groups/group-item';

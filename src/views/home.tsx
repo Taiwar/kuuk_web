@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 import React from 'react';
 import { LoadingSpinner } from '../components/loading-spinner';
-import { RecipeCard } from '../components/recipe-card';
+import { RecipeCard } from '../components/recipes/recipe-card';
 import { RecipeDTO } from '../shared/graphql';
 
 const FETCH_RECIPES = gql`

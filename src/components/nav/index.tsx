@@ -3,7 +3,7 @@ import { Download, Plus, Search } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import KuukNavLink from './kuuk-nav-link';
 
-export function Header(): JSX.Element {
+export function Nav(): JSX.Element {
   return (
     <aside className="flex flex-col items-center bg-white text-gray-700 shadow w-16">
       <Link className="w-full h-16 flex items-center hover:bg-gray-100" to="/">

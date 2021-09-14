@@ -1,6 +1,7 @@
 import { FetchResult } from '@apollo/client';
-import { Plus, X } from 'react-bootstrap-icons';
 import React, { SyntheticEvent, useEffect, useRef } from 'react';
+import { CancelButton } from '../../../components/buttons/cancel-button';
+import { SubmitButton } from '../../../components/buttons/submit-button';
 import { AddStepInput } from '../../../shared/graphql';
 import { useForm } from 'react-hook-form';
 
@@ -36,8 +37,8 @@ export function StepForm(props: StepFormProps): JSX.Element {
       hidden={!props.showForm}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="grid grid-cols-5 gap-1 lg:w-1/2">
-        <div className="col-span-1">
+      <div className="flex align-start lg:w-1/2">
+        <div className="flex-initial ml-2">
           <input
             required
             className="block w-full rounded-md border-gray-300 shadow-sm"
@@ -46,26 +47,18 @@ export function StepForm(props: StepFormProps): JSX.Element {
             {...register('name')}
           />
         </div>
-        <div className="col-span-3">
+        <div className="flex-initial ml-2">
           <textarea
             className="block w-full rounded-md border-gray-300 shadow-sm"
             placeholder="Description"
             {...register('description')}
           />
         </div>
-        <div className="col-span-1">
-          <button
-            className="rounded-full p-1.5 shadow bg-pink-400 text-white"
-            type="submit"
-          >
-            <Plus size={32} />
-          </button>
-          <button
-            className="rounded-full p-1.5 shadow bg-pink-400 text-white ml-1"
-            onClick={handleCancel}
-          >
-            <X size={32} />
-          </button>
+        <div className="flex-initial ml-1">
+          <SubmitButton size={8} />
+        </div>
+        <div className="flex-initial ml-1">
+          <CancelButton onClick={handleCancel} />
         </div>
       </div>
     </form>

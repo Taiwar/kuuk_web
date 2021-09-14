@@ -1,6 +1,8 @@
 import React, { SyntheticEvent, useState } from 'react';
-import { Check, Trash, X } from 'react-bootstrap-icons';
 import { useForm } from 'react-hook-form';
+import { CancelButton } from '../../../components/buttons/cancel-button';
+import { DeleteButton } from '../../../components/buttons/delete-button';
+import { SubmitButton } from '../../../components/buttons/submit-button';
 import { IngredientDTO, UpdateIngredientInput } from '../../../shared/graphql';
 
 type IngredientItemProps = {
@@ -49,66 +51,58 @@ export function IngredientItem(props: IngredientItemProps): JSX.Element {
 
   return (
     <div className="flex">
-      <button
+      <DeleteButton
         hidden={!editable}
-        className="rounded-full p-1 shadow bg-pink-400 text-white ml-1"
+        className="flex-initial ml-1"
         onClick={handleOnDelete}
-      >
-        <Trash size={16} />
-      </button>
+      />
       <input className="mx-2 mt-1" type="checkbox" />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex-1 inline" onDoubleClick={handleOnFormDoubleClick}>
-          <span hidden={fieldsEditable} className="font-bold">
+      <form className="flex-1" onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex" onDoubleClick={handleOnFormDoubleClick}>
+          <span hidden={fieldsEditable} className="font-bold flex-initial">
             {ingredient.amount}
           </span>
           <input
             hidden={!fieldsEditable}
             required
-            className={`mx-2 w-20 rounded-md border-gray-300 shadow-sm ${
+            className={`flex-initial mx-2 w-20 rounded-md border-gray-300 shadow-sm ${
               fieldsEditable ? '' : 'hidden'
             }`}
             type="number"
             placeholder="Amount*"
             {...register('amount')}
           />
-          <span hidden={fieldsEditable} className="font-bold mr-1">
+          <span hidden={fieldsEditable} className="flex-initial font-bold mr-1">
             {ingredient.unit}
           </span>
           <input
             hidden={!fieldsEditable}
             required
-            className={`mx-2 w-20 rounded-md border-gray-300 shadow-sm ${
+            className={`flex-initial mx-2 w-20 rounded-md border-gray-300 shadow-sm ${
               fieldsEditable ? '' : 'hidden'
             }`}
             type="text"
             placeholder="Unit*"
             {...register('unit')}
           />
-          <span hidden={fieldsEditable}>{ingredient.name}</span>
+          <span className="flex-initial" hidden={fieldsEditable}>
+            {ingredient.name}
+          </span>
           <input
             hidden={!fieldsEditable}
             required
-            className={`mx-2 w-50 rounded-md border-gray-300 shadow-sm ${
+            className={`flex-initial mx-2 w-50 rounded-md border-gray-300 shadow-sm ${
               fieldsEditable ? '' : 'hidden'
             }`}
             type="text"
             placeholder="Name*"
             {...register('name')}
           />
-          <div className={`inline ${!fieldsEditable ? 'hidden' : ''}`}>
-            <button
-              className="rounded-full p-1 shadow bg-pink-400 text-white ml-1"
-              type="submit"
-            >
-              <Check size={20} />
-            </button>
-            <button
-              className="rounded-full p-1 shadow bg-pink-400 text-white ml-1"
-              onClick={handleCancel}
-            >
-              <X size={20} />
-            </button>
+          <div className={`flex-initial ${!fieldsEditable ? 'hidden' : ''}`}>
+            <SubmitButton className="ml-1" size={8} />
+          </div>
+          <div className={`flex-initial ${!fieldsEditable ? 'hidden' : ''}`}>
+            <CancelButton className="ml-1" onClick={handleCancel} />
           </div>
         </div>
       </form>

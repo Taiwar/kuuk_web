@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { GroupForm } from '../views/recipe/groups/group-form';
+import { GroupForm } from '../../views/recipe/groups/group-form';
 import { gql, useMutation } from '@apollo/client';
-import { GroupItemTypes } from '../shared/constants';
-import { AddGroupInput } from '../shared/graphql';
-import { Pencil, PencilFill, Plus } from 'react-bootstrap-icons';
+import { GroupItemTypes } from '../../shared/constants';
+import { AddGroupInput } from '../../shared/graphql';
+import { AddButton } from '../buttons/add-button';
+import { EditButton } from '../buttons/edit-button';
 
 const ADD_GROUP = gql`
   mutation AddGroup($addGroupInput: AddGroupInput!) {
@@ -111,18 +112,12 @@ export function RecipeSectionHeader(
       <div className="flex">
         <h4 className="flex text-2xl my-3">{props.title}</h4>
         <div hidden={showForm} className="flex ml-2 justify-center">
-          <button
-            className="rounded-full h-8 w-8 shadow bg-pink-400 text-white hover:shadow-lg pl-1 mt-3.5"
-            onClick={handleClickAdd}
-          >
-            <Plus size={24} />
-          </button>
-          <button
-            className="rounded-full h-8 w-8 shadow bg-pink-400 text-white hover:shadow-lg pl-2.5 ml-1 mt-3.5"
+          <AddButton className="mt-3" onClick={handleClickAdd} />
+          <EditButton
+            className="mt-3 ml-1"
+            editable={props.editable}
             onClick={handleOnEditClick}
-          >
-            {props.editable ? <Pencil size={12} /> : <PencilFill size={12} />}
-          </button>
+          />
         </div>
       </div>
       <GroupForm

@@ -1,7 +1,8 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { useRef, useState } from 'react';
-import { Plus, X } from 'react-bootstrap-icons';
-import { RecipeTag } from '../../components/recipe-tag';
+import { CancelButton } from '../../components/buttons/cancel-button';
+import { SubmitButton } from '../../components/buttons/submit-button';
+import { RecipeTag } from '../../components/recipes/recipe-tag';
 import { RecipeDTO, UpdateRecipeInput } from '../../shared/graphql';
 
 const UPDATE_RECIPE = gql`
@@ -113,30 +114,22 @@ export function RecipeTags(props: RecipeTagsProps): JSX.Element {
           + Add tag
         </span>
       </div>
-      <div className={`grid grid-cols-2 gap-2 ${showForm ? '' : 'hidden'}`}>
+      <div className={`flex gap-2 ${showForm ? '' : 'hidden'}`}>
         <input
           value={newTag}
           onChange={(e) => setNewTag(e.target.value)}
           ref={inputRef}
           type="text"
           required
-          className="block rounded-md border-gray-300 shadow-sm"
+          className="flex-initial rounded-md border-gray-300 shadow-sm"
           placeholder="Tag name*"
           onKeyPress={(e) => (e.key === 'Enter' ? handleSubmit() : null)}
         />
-        <div className="mt-1">
-          <button
-            className="rounded-full p-1 shadow bg-pink-200"
-            onClick={handleSubmit}
-          >
-            <Plus size={24} />
-          </button>
-          <button
-            className="rounded-full p-1 shadow bg-pink-200 ml-1"
-            onClick={handleCancel}
-          >
-            <X size={24} />
-          </button>
+        <div className="flex-initial ml-1">
+          <SubmitButton size={8} />
+        </div>
+        <div className="flex-initial">
+          <CancelButton onClick={handleCancel} />
         </div>
       </div>
     </div>

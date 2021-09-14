@@ -1,4 +1,7 @@
 import React, { ReactChild, useState } from 'react';
+import { AddButton } from '../../../components/buttons/add-button';
+import { DeleteButton } from '../../../components/buttons/delete-button';
+import { EditButton } from '../../../components/buttons/edit-button';
 import {
   GroupDTO,
   IngredientDTO,
@@ -10,7 +13,6 @@ import { AddInputType, UpdateInputType } from '../../../shared/types';
 import { IngredientItem } from '../ingredients/ingredient-item';
 import { NoteItem } from '../notes/note-item';
 import { StepItem } from '../steps/step-item';
-import { Pencil, PencilFill, Plus, Trash } from 'react-bootstrap-icons';
 import { IngredientForm } from '../ingredients/ingredient-form';
 import { StepForm } from '../steps/step-form';
 import { NoteForm } from '../notes/note-form';
@@ -147,31 +149,23 @@ export function GroupItem(props: ItemGroupProps): JSX.Element {
 
   return (
     <div className="mt-2">
-      <div className="flex">
-        <button
+      <div className="flex mb-1">
+        <DeleteButton
           hidden={isDefaultGroup || !props.editable}
-          className="h-8 w-8 rounded-full px-2 my-0.5 shadow bg-pink-400 text-white mr-1"
+          className="mr-1"
           onClick={handleGroupDelete}
-        >
-          <Trash size={16} />
-        </button>
+        />
         <h4 className="text-xl">
           {isDefaultGroup ? 'General' : props.group.name}
         </h4>
         <div hidden={showItemForm} className="flex ml-2 justify-center">
-          <button
-            className="rounded-full h-8 w-8 shadow bg-pink-400 text-white hover:shadow-lg pl-1"
-            onClick={handleClickAdd}
-          >
-            <Plus size={24} />
-          </button>
-          <button
+          <AddButton onClick={handleClickAdd} />
+          <EditButton
+            className="ml-1"
             hidden={props.group.items.length < 1}
-            className="rounded-full h-8 w-8 shadow bg-pink-400 text-white hover:shadow-lg pl-2.5 ml-1"
+            editable={itemEditable}
             onClick={handleClickEdit}
-          >
-            {itemEditable ? <Pencil size={12} /> : <PencilFill size={12} />}
-          </button>
+          />
         </div>
       </div>
       <Droppable droppableId={props.group.id}>

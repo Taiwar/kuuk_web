@@ -5,7 +5,7 @@ import { Search as SearchIcon } from 'react-bootstrap-icons';
 import { useForm, Controller } from 'react-hook-form';
 import { useHistory, useLocation } from 'react-router-dom';
 import { LoadingSpinner } from '../../components/loading-spinner';
-import { RecipeCard } from '../../components/recipe-card';
+import { RecipeCard } from '../../components/recipes/recipe-card';
 import { TopBar } from '../../components/top-bar';
 import { FilterRecipesInput, RecipeDTO } from '../../shared/graphql';
 

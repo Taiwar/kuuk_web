@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { RecipeDTO } from '../shared/graphql';
+import { RecipeDTO } from '../../shared/graphql';
 import { RecipeTag } from './recipe-tag';
 
 type RecipeCardProps = { recipe: RecipeDTO };

@@ -2,6 +2,7 @@ import { gql, useMutation } from '@apollo/client';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { SubmitButton } from '../../components/buttons/submit-button';
 import { TopBar } from '../../components/top-bar';
 import { CreateRecipeInput } from '../../shared/graphql';
 
@@ -86,12 +87,7 @@ export function CreateRecipe(): JSX.Element {
               </div>
             </div>
             <div className="flex justify-end mt-4">
-              <button
-                className="rounded p-1.5 shadow bg-pink-400 text-white"
-                type="submit"
-              >
-                Create
-              </button>
+              <SubmitButton size={8} />
             </div>
           </form>
         </div>

@@ -1,6 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { SyntheticEvent, useRef, useState } from 'react';
-import { Pencil, PencilFill, Plus, Trash, X } from 'react-bootstrap-icons';
+import { AddButton } from '../../components/buttons/add-button';
+import { CancelButton } from '../../components/buttons/cancel-button';
+import { DeleteButton } from '../../components/buttons/delete-button';
+import { EditButton } from '../../components/buttons/edit-button';
 import { RecipeDTO, UpdateRecipeInput } from '../../shared/graphql';
 
 const UPDATE_RECIPE = gql`
@@ -105,19 +108,12 @@ export function RecipeSourceLinks(props: RecipeSourceLinksProps): JSX.Element {
           recipe.sourceLinks.length === 1 ? '' : 's'
         }`}</h4>
         <div hidden={showForm} className="flex ml-2 mt-3 justify-center">
-          <button
-            className="rounded-full w-7 h-7 shadow bg-pink-400 text-white hover:shadow-lg pl-1"
-            onClick={handleClickAdd}
-          >
-            <Plus size={20} />
-          </button>
-          <button
-            hidden={recipe.sourceLinks.length < 1}
-            className="rounded-full w-7 h-7 shadow bg-pink-400 text-white ml-1 hover:shadow-lg pl-2"
+          <AddButton onClick={handleClickAdd} />
+          <EditButton
+            className="ml-1"
+            editable={editable}
             onClick={handleClickEdit}
-          >
-            {editable ? <Pencil size={10} /> : <PencilFill size={10} />}
-          </button>
+          />
         </div>
       </div>
       <div className="mb-4">
@@ -128,23 +124,19 @@ export function RecipeSourceLinks(props: RecipeSourceLinksProps): JSX.Element {
                 editable ? 'hidden' : ''
               }`}
             />
-            <button
+            <DeleteButton
               hidden={!editable}
-              className="rounded-full p-1 shadow bg-pink-400 text-white ml-1"
+              className="ml-1"
               onClick={() => handleClickRemove(sourceLink)}
-            >
-              <Trash size={16} />
-            </button>
-            <p className="col-span-6 inline ml-1">{sourceLink}</p>
+            />
+            <a className="col-span-6 inline ml-1" href={sourceLink}>
+              {sourceLink}
+            </a>
           </div>
         ))}
       </div>
-      <div
-        className={`grid grid-cols-4 gap-2 lg:w-1/2 ${
-          showForm ? '' : 'hidden'
-        }`}
-      >
-        <div className="col-span-3">
+      <div className={`flex lg:w-1/2 ${showForm ? '' : 'hidden'}`}>
+        <div className="flex-1">
           <input
             value={newSourceLink}
             onChange={(e) => setNewSourceLink(e.target.value)}
@@ -156,19 +148,11 @@ export function RecipeSourceLinks(props: RecipeSourceLinksProps): JSX.Element {
             onKeyPress={(e) => (e.key === 'Enter' ? handleSubmit() : null)}
           />
         </div>
-        <div className="col-span-1">
-          <button
-            className="rounded-full p-1 shadow bg-pink-200"
-            onClick={handleSubmit}
-          >
-            <Plus size={24} />
-          </button>
-          <button
-            className="rounded-full p-1 shadow bg-pink-200 ml-1"
-            onClick={handleCancel}
-          >
-            <X size={24} />
-          </button>
+        <div className="flex-initial ml-1 mt-1">
+          <AddButton onClick={handleSubmit} />
+        </div>
+        <div className="flex-initial mt-1">
+          <CancelButton className="ml-1" onClick={handleCancel} />
         </div>
       </div>
     </div>

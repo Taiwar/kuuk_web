@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
-import { Header } from './components/header';
+import { Nav } from './components/nav';
 import { CreateRecipe } from './views/createRecipe';
 import { Home } from './views/home';
 import { RecipePage } from './views/recipe';
@@ -12,7 +12,7 @@ function App(): JSX.Element {
   return (
     <Router>
       <div className="h-full min-h-screen flex bg-gray-100">
-        <Header />
+        <Nav />
         <main className="w-full">
           <Switch>
             <Route path="/recipe/:slug">
