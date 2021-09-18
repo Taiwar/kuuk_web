@@ -59,10 +59,9 @@ export function NoteItem(props: NoteItemProps): JSX.Element {
           className="flex justify-center"
           onDoubleClick={handleOnFormDoubleClick}
         >
-          <span className="flex-initial bg-pink-400 text-white text-center rounded-full mt-2 mr-2 w-7 h-7">
+          <span className="flex-shrink-0 bg-pink-400 text-white text-center rounded-full mr-1 mt-0.5 w-6 pb-0.5">
             {note.sortNr}
           </span>
-
           <span
             className={`flex-initial mt-1.5 font-bold ${
               fieldsEditable ? 'hidden' : ''

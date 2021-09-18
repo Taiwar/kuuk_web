@@ -59,12 +59,12 @@ export function StepItem(props: StepItemProps): JSX.Element {
           className="flex items-start"
           onDoubleClick={handleOnFormDoubleClick}
         >
-          <span className="flex-initial inline-block bg-pink-400 text-white text-center rounded-full mb-1 mr-2 w-7 h-7">
+          <span className="flex-shrink-0 bg-pink-400 text-white text-center rounded-full mr-1 mt-0.5 w-6 pb-0.5">
             {step.sortNr}
           </span>
 
           <span
-            className={`flex-initial font-bold ${
+            className={`flex-initial font-bold${
               fieldsEditable ? 'hidden' : ''
             }`}
           >
